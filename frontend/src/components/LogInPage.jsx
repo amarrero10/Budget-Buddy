@@ -28,11 +28,11 @@ function LogInPage() {
   return (
     <>
       <div className=" mt-7">
-        <h1 className=" text-center text-3xl text-sapphire">Welcome to Budget Buddy!</h1>
+        <h1 className=" text-center text-3xl text-sapphire font-bold">Welcome to Budget Buddy!</h1>
         <p className=" text-center text-xl text-sapphire">Please sign in</p>
         <div className=" h-[300px]">
           <form
-            className=" w-10/12 h-full shadow-xl flex flex-col mx-auto my-4 py-4 rounded-xl bg-sapphire text-offwhite"
+            className=" w-10/12 h-full shadow-xl flex flex-col mx-auto my-4 py-4 rounded-xl bg-sapphire text-offwhite sm:w-1/2"
             onSubmit={handleSubmit}
           >
             <div className=" flex flex-col mb-3 px-3">
@@ -60,10 +60,7 @@ function LogInPage() {
               />
             </div>
             <div className="mx-auto w-2/3 mt-10">
-              <button
-                className=" border border-crimson rounded-md w-full p-3 text-lg"
-                type="submit"
-              >
+              <button className=" bg-crimson rounded-md w-full p-3 text-lg" type="submit">
                 Log in
               </button>
             </div>

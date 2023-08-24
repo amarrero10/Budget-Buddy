@@ -3,6 +3,7 @@ import { Link, Redirect, useHistory } from "react-router-dom/cjs/react-router-do
 import { FaCheck } from "react-icons/fa";
 import * as sessionActions from "../store/session";
 import { useDispatch, useSelector } from "react-redux";
+import logo from "../assets/logo.png";
 
 function SignUpPage() {
   const history = useHistory();
@@ -44,49 +45,30 @@ function SignUpPage() {
       <div className="hidden sm:flex items-center justify-center h-screen w-2/3 mx-auto ">
         <div className=" w-1/2 bg-sapphire p-6  text-offwhite rounded-tl-lg rounded-bl-lg shadow-2xl h-2/3">
           <h1 className="text-2xl font-bold mb-4 text-center">Welcome to Budget Buddy!</h1>
-          <p className=" text-justify">
+          <img
+            src={logo}
+            alt="logo for the website budget buddy"
+            className=" h-36 mx-auto rounded-full mb-4"
+          ></img>
+
+          <p className=" text-justify leading-loose">
             Budget Buddy is your all-in-one financial management platform designed to help you take
             control of your finances and achieve your financial goals. With Budget Buddy, you can
             effortlessly manage your income, expenses, bills, and savings goals, all in one place.
           </p>
-          <p className="my-2">Here's how Budget Buddy can help you:</p>
-          <ul>
-            <div className=" flex items-start">
-              <FaCheck className="h-6 w-6 mr-1" />
-              <li>
-                Track Your Expenses: Record your daily expenses and categorize them to gain insights
-                into your spending habits.
-              </li>
-            </div>
-            <div className=" flex items-start">
-              <FaCheck className="h-6 w-6 mr-1" />
-              <li>
-                Manage Bills: Stay on top of your bills with reminders for due dates and easy access
-                to payment links.
-              </li>
-            </div>
-            <div className=" flex items-start">
-              <FaCheck className="h-6 w-6 mr-1" />
-              <li>
-                Create Budgets: Set up budgets for different categories to ensure you're staying
-                within your financial limits.
-              </li>
-            </div>
-            <div className=" flex items-start">
-              <FaCheck className="h-6 w-6 mr-1" />
-              <li>
-                Savings Goals: Plan for the future by setting savings goals and tracking your
-                progress towards achieving them.
-              </li>
-            </div>
-          </ul>
-
-          <p className="mt-4 text-center">
+          <p className="mt-4 text-center tracking-wide">
             Sign up now and start managing your finances like a pro!
+          </p>
+          <p className="text-center mt-4">
+            Already Have an account? Log in{" "}
+            <Link to="/" className=" underline">
+              Here
+            </Link>
+            !
           </p>
         </div>
         <div className="w-1/2 h-2/3 shadow-2xl rounded-tr-lg rounded-br-lg flex flex-col justify-center items-center">
-          <form className="flex flex-col justify-between h-2/3 w-11/12 -mt-10" onSubmit={signup}>
+          <form className="flex flex-col justify-between h-2/3 w-11/12 -mt-44" onSubmit={signup}>
             <div className="flex flex-col">
               <label className=" text-xl" htmlFor="firstName">
                 First Name
@@ -163,42 +145,143 @@ function SignUpPage() {
               ></input>
             </div>
             <button
-              className="p-2 rounded-sm mt-3 bg-crimson hover:bg-sapphire hover:text-offwhite"
+              className="p-2 rounded-sm mt-3 bg-crimson hover:bg-sapphire hover:text-offwhite "
               type="submit"
             >
               Sign Up!
             </button>
           </form>
-          <p className="mt-24">
-            Already Have an account? Log in{" "}
-            <Link to="/" className=" underline">
-              Here
-            </Link>
-            !
-          </p>
         </div>
       </div>
+      {/* End Desktop */}
 
       {/* MOBIL ONLY */}
       <div className="sm:hidden">
-        <h1>Welcome to Budget Buddy!</h1>
-        <p>
+        <img src={logo} alt="logo for the website budget buddy" className=" max-h-60 mx-auto"></img>
+        <h1 className="text-center text-2xl mb-5">Welcome to Budget Buddy!</h1>
+        <p className="text-justify px-2">
           Budget Buddy helps you manage your money on the go. Track expenses, pay bills, and reach
           your financial goals—all in one app.
         </p>
 
-        <p>Features:</p>
+        <p className="pl-2">Features:</p>
 
-        <ul>
-          <li>Expense Tracking</li>
-          <li>Bill Management</li>
-          <li>Budgets</li>
-          <li>Visualize Finances</li>
-          <li>Savings Goals</li>
+        <ul className="pl-2">
+          <div className=" flex items-start">
+            <FaCheck className="h-4 w-4 mr-1" />
+            <li>Expense Tracking</li>
+          </div>
+          <div className=" flex items-start">
+            <FaCheck className="h-4 w-4 mr-1" />
+            <li>Bill Management</li>
+          </div>
+          <div className=" flex items-start">
+            <FaCheck className="h-4 w-4 mr-1" />
+            <li>Budgets</li>
+          </div>
+          <div className=" flex items-start">
+            <FaCheck className="h-4 w-4 mr-1" />
+            <li>Savings Goals</li>
+          </div>
         </ul>
 
-        <p>Sign up now and take control of your finances, anytime, anywhere!</p>
+        <p className=" text-center px-2 mt-3">
+          Sign up now and take control of your finances, anytime, anywhere!
+        </p>
       </div>
+      <div className=" w-9/12 h-2/3 border border-crimson flex flex-col justify-center items-center mx-auto rounded-md mt-2 mb-2 sm:hidden">
+        <form className="flex flex-col justify-between h-2/3 w-11/12 mt-5" onSubmit={signup}>
+          <div className="flex flex-col">
+            <label className=" text-xl" htmlFor="mobil-firstName">
+              First Name
+            </label>
+            <input
+              className="border border-crimson p-3 rounded-sm my-2"
+              id="mobil-firstName"
+              name="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="John"
+              required
+              type="text"
+            ></input>
+          </div>
+          <div className="flex flex-col ">
+            <label className=" text-xl" htmlFor="mobil-lastName">
+              Last Name
+            </label>
+            <input
+              className="border border-crimson p-3 rounded-sm my-2"
+              id="mobil-lastName"
+              name="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Doe"
+              required
+              type="text"
+            ></input>
+          </div>
+          <div className="flex flex-col ">
+            <label className=" text-xl" htmlFor="mobil-username">
+              User Name
+            </label>
+            <input
+              className="border border-crimson p-3 rounded-sm my-2"
+              id="mobil-username"
+              name="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="john-doe"
+              required
+              type="text"
+            ></input>
+          </div>
+          <div className="flex flex-col">
+            <label className=" text-xl" htmlFor="mobil-email">
+              Email
+            </label>
+            <input
+              className="border border-crimson p-3 rounded-sm my-2"
+              id="mobil-email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="johndoe@gmail.com"
+              required
+              type="email"
+            ></input>
+          </div>
+          <div className="flex flex-col ">
+            <label htmlFor="mobil-password" className="text-xl">
+              Password
+            </label>
+            <input
+              className="border border-crimson p-3 rounded-sm my-2"
+              id="mobil-password"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••••"
+              required
+              type="password"
+            ></input>
+          </div>
+          <button
+            className="p-2 rounded-sm mt-3 bg-crimson hover:bg-sapphire hover:text-offwhite"
+            type="submit"
+          >
+            Sign Up!
+          </button>
+        </form>
+        <p className="my-2">
+          Already Have an account? Log in{" "}
+          <Link to="/" className=" underline">
+            Here
+          </Link>
+          !
+        </p>
+      </div>
+      {/* End MOBIL ONLY */}
     </>
   );
 }
