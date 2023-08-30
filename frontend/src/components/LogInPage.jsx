@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router-dom/cjs/react-router-dom";
 import * as sessionActions from "../store/session";
+import { motion as m } from "framer-motion";
 
 function LogInPage() {
   const [credential, setCredential] = useState("");
@@ -60,9 +61,14 @@ function LogInPage() {
               />
             </div>
             <div className="mx-auto w-2/3 mt-10">
-              <button className=" bg-crimson rounded-md w-full p-3 text-lg" type="submit">
+              <m.button
+                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.1 }}
+                className=" bg-crimson rounded-md w-full p-3 text-lg"
+                type="submit"
+              >
                 Log in
-              </button>
+              </m.button>
             </div>
           </form>
         </div>

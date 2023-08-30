@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Redirect, useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { FaCheck } from "react-icons/fa";
 import * as sessionActions from "../store/session";
 import { useDispatch, useSelector } from "react-redux";
 import logo from "../assets/logo.png";
+import { motion } from "framer-motion";
 
 function SignUpPage() {
   const history = useHistory();
@@ -144,12 +145,14 @@ function SignUpPage() {
                 type="password"
               ></input>
             </div>
-            <button
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.05 }}
               className="p-2 rounded-sm mt-3 bg-crimson hover:bg-sapphire hover:text-offwhite "
               type="submit"
             >
               Sign Up!
-            </button>
+            </motion.button>
           </form>
         </div>
       </div>
