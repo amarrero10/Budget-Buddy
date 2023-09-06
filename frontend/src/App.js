@@ -6,6 +6,10 @@ import SignUpPage from "./components/SignUpPage";
 import * as sessionActions from "./store/session";
 import LogInPage from "./components/LogInPage";
 import Navigation from "./components/Navigation";
+import Bills from "./components/Bills";
+import Budget from "./components/Budget";
+import Settings from "./components/Settings";
+import Savings from "./components/Savings";
 
 function App() {
   const dispatch = useDispatch();
@@ -33,6 +37,18 @@ function App() {
         </Route>
         <Route exact path="/home">
           {sessionUser ? <HomePage /> : <Redirect to="/" />}
+        </Route>
+        <Route exact path="/bills">
+          {sessionUser ? <Bills /> : <Redirect to="/" />}
+        </Route>
+        <Route exact path="/budget">
+          {sessionUser ? <Budget /> : <Redirect to="/" />}
+        </Route>
+        <Route exact path="/settings">
+          {sessionUser ? <Settings /> : <Redirect to="/" />}
+        </Route>
+        <Route exact path="/savings">
+          {sessionUser ? <Savings /> : <Redirect to="/" />}
         </Route>
         <Redirect to="/" />
       </Switch>

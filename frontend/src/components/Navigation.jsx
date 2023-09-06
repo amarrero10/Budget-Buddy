@@ -40,14 +40,14 @@ function Navigation() {
             isOpen === false ? "max-h-0 opacity-0" : "max-h-[500px] opacity-100"
           } text-center text-xl text-offwhite transition-all duration-500 ease-in-out overflow-hidden bg-sapphire`}
         >
-          <Link>
+          <Link to="/bills">
             <div className=" flex items-center justify-center py-4">
               <FaRegEdit className="mr-3" />
               <li>Bills</li>
             </div>
           </Link>
           <hr />
-          <Link>
+          <Link to="/budget">
             <div className=" flex items-center justify-center py-4">
               <FaMoneyBillWave className="mr-3" />
               <li>Budget</li>
@@ -55,14 +55,14 @@ function Navigation() {
           </Link>
           <hr />
 
-          <Link>
+          <Link to="/settings">
             <div className="flex items-center justify-center py-4">
               <FaCog className="mr-3" />
               <li>Settings</li>
             </div>
           </Link>
           <hr />
-          <Link>
+          <Link to="/savings">
             <div className=" flex items-center justify-center py-4">
               <FaCheckSquare className="mr-3" />
               <li>Savings Goal</li>
