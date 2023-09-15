@@ -13,25 +13,34 @@ module.exports = {
       options,
       [
         {
-          firstName: "Demo",
-          lastName: "User",
-          email: "demo@user.io",
-          username: "Demo-lition",
-          hashpass: bcrypt.hashSync("password"),
+          userId: 1,
+          billId: 1,
+          reminderDate: "2023-10-03",
+          reminder: "Reminder to pay your Electric bill",
         },
         {
-          firstName: "Fake1",
-          lastName: "User1",
-          email: "user1@user.io",
-          username: "FakeUser1",
-          hashpass: bcrypt.hashSync("password"),
+          userId: 1,
+          billId: 2,
+          reminderDate: "2023-10-13",
+          reminder: "Reminder to pay your Capital One Credit Card",
         },
         {
-          firstName: "Fake2",
-          lastName: "User2",
-          email: "user2@user.io",
-          username: "FakeUser2",
-          hashpass: bcrypt.hashSync("password"),
+          userId: 1,
+          billId: 3,
+          reminderDate: "2023-10-7",
+          reminder: "Reminder to pay your phone bill",
+        },
+        {
+          userId: 1,
+          savingsId: 1,
+          reminderDate: "2023-10-7",
+          reminder: "Reminder to add to your moving fund",
+        },
+        {
+          userId: 1,
+          savingsId: 2,
+          reminderDate: "2023-10-7",
+          reminder: "Reminder to add to your vaction fund",
         },
       ],
       {}
@@ -44,7 +53,7 @@ module.exports = {
     return queryInterface.bulkDelete(
       options,
       {
-        username: { [Op.in]: ["Demo-lition", "FakeUser1", "FakeUser2"] },
+        userId: { [Op.in]: [1] },
       },
       {}
     );

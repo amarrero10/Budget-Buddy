@@ -21,7 +21,47 @@ module.exports = (sequelize, DataTypes) => {
       userId: { type: DataTypes.INTEGER, allowNull: false },
       budgetName: { type: DataTypes.STRING, allowNull: false },
       budgetAmount: { type: DataTypes.INTEGER, allowNull: false },
-      resetDate: { type: DataTypes.DATE, allowNull: false },
+      budgetDay: {
+        type: DataTypes.INTEGER,
+        validate: {
+          min: 1,
+          max: 31,
+          isInt: true,
+        },
+      },
+      budgetStartMonth: {
+        validate: {
+          isIn: {
+            args: [
+              [
+                "January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December",
+              ],
+            ],
+            msg: "Invalid starting month",
+          },
+        },
+      },
+      budgetFrequency: {
+        validate: {
+          isIn: {
+            args: [
+              ["every week", "every two weeks", "every month", "every quarter", "once a year"],
+            ],
+            msg: "Invalid budget frequency",
+          },
+        },
+      },
     },
     {
       sequelize,

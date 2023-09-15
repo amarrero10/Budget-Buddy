@@ -30,9 +30,14 @@ module.exports = {
           type: Sequelize.INTEGER,
           allowNull: false,
         },
-        resetDate: {
-          type: Sequelize.DATE,
-          allowNull: false,
+        budgetDay: {
+          type: Sequelize.INTEGER,
+        },
+        budgetStartMonth: {
+          type: Sequelize.STRING,
+        },
+        budgetFrequency: {
+          type: Sequelize.STRING,
         },
         createdAt: {
           allowNull: false,

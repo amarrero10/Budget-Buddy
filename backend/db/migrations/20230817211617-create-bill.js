@@ -28,7 +28,15 @@ module.exports = {
         },
         dueDate: {
           type: Sequelize.DATE,
-          allowNull: false,
+        },
+        billingDay: {
+          type: Sequelize.INTEGER,
+        },
+        billingStartMonth: {
+          type: Sequelize.STRING,
+        },
+        billingFrequency: {
+          type: Sequelize.STRING,
         },
         billAmount: {
           type: Sequelize.INTEGER,
