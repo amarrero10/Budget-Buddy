@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       budgetStartMonth: {
+        type: DataTypes.STRING,
         validate: {
           isIn: {
             args: [
@@ -53,6 +54,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       budgetFrequency: {
+        type: DataTypes.STRING,
         validate: {
           isIn: {
             args: [

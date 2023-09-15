@@ -1,10 +1,12 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
-
+const { Sequelize } = require("sequelize");
+const { Op } = require("sequelize");
 const { setTokenCookie, requireAuth } = require("../../utils/auth");
 const { User } = require("../../db/models");
 const { check } = require("express-validator");
 const { handleValidationErrors } = require("../../utils/validation");
+const { Bill } = require("../../db/models");
 
 const router = express.Router();
 
@@ -44,6 +46,18 @@ router.post("/signup", validateSignup, async (req, res) => {
   return res.json({
     user: safeUser,
   });
+});
+
+// Get all bils of current user
+router.get("/current/bills", async (req, res) => {
+  const user = req.user;
+
+  const bills = await Bill.findAll({
+    where: {
+      userId: user.id,
+    },
+  });
+  res.status(200).json({ Bills: bills });
 });
 
 module.exports = router;

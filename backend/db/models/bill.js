@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "billId",
       });
       Bill.belongsTo(models.Budget, {
-        foreignKey: "billId",
+        foreignKey: "budgetId",
       });
       Bill.belongsTo(models.User, {
         foreignKey: "userId",
@@ -37,6 +37,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       billingStartMonth: {
+        type: DataTypes.STRING,
         validate: {
           isIn: {
             args: [
@@ -60,6 +61,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       billingFrequency: {
+        type: DataTypes.STRING,
         validate: {
           isIn: {
             args: [
