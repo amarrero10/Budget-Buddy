@@ -8,7 +8,15 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Bill.hasMany(models.Reminder, {
+        foreignKey: "billId",
+      });
+      Bill.belongsTo(models.Budget, {
+        foreignKey: "billId",
+      });
+      Bill.belongsTo(models.User, {
+        foreignKey: "userId",
+      });
     }
   }
   Bill.init(
@@ -18,10 +26,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       billName: { type: DataTypes.STRING, allowNull: false },
-      paymentLink: { type: DataTypes.STRING, allowNull: false },
+      paymentLink: { type: DataTypes.STRING },
       dueDate: { type: DataTypes.DATE, allowNull: false },
       billAmount: { type: DataTypes.INTEGER, allowNull: false },
-      categoryId: { type: DataTypes.INTEGER, allowNull: false },
+      categoryId: { type: DataTypes.INTEGER },
     },
     {
       sequelize,

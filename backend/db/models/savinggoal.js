@@ -8,7 +8,12 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      SavingGoal.belongsTo(models.User, {
+        foreignKey: "userId",
+      });
+      SavingGoal.hasMany(models.Reminder, {
+        foreignKey: "savingsId",
+      });
     }
   }
   SavingGoal.init(
@@ -17,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       goalName: { type: DataTypes.STRING, allowNull: false },
       targetAmount: { type: DataTypes.INTEGER, allowNull: false },
       currentAmount: { type: DataTypes.INTEGER, allowNull: false },
+      complete: { type: DataTypes.BOOLEAN, allowNull: false },
     },
     {
       sequelize,

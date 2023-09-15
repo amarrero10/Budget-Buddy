@@ -25,7 +25,6 @@ module.exports = {
         },
         paymentLink: {
           type: Sequelize.STRING,
-          allowNull: false,
         },
         dueDate: {
           type: Sequelize.DATE,
@@ -35,9 +34,11 @@ module.exports = {
           type: Sequelize.INTEGER,
           allowNull: false,
         },
+        budgetId: {
+          type: Sequelize.INTEGER,
+        },
         categoryId: {
           type: Sequelize.INTEGER,
-          allowNull: false,
         },
         createdAt: {
           allowNull: false,

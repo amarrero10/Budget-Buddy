@@ -8,13 +8,22 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Reminder.belongsTo(models.Bill, {
+        foreignKey: "billId",
+      });
+      Reminder.belongsTo(models.SavingGoal, {
+        foreignKey: "savingsId",
+      });
+      Reminder.belongsTo(models.User, {
+        foreignKey: "userId",
+      });
     }
   }
   Reminder.init(
     {
       userId: { type: DataTypes.INTEGER, allowNull: false },
-      billId: { type: DataTypes.INTEGER, allowNull: false },
+      billId: { type: DataTypes.INTEGER },
+      savingsId: { type: DataTypes.INTEGER },
       reminderDate: { type: DataTypes.DATE, allowNull: false },
       reminder: { type: DataTypes.STRING, allowNull: false },
     },

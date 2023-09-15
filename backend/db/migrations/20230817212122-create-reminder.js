@@ -21,7 +21,9 @@ module.exports = {
         },
         billId: {
           type: Sequelize.INTEGER,
-          allowNull: false,
+        },
+        savingsId: {
+          type: Sequelize.INTEGER,
         },
         reminderDate: {
           type: Sequelize.DATE,

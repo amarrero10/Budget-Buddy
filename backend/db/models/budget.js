@@ -8,14 +8,20 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Budget.hasMany(models.Bill, {
+        foreignKey: "budgetId",
+      });
+      Budget.belongsTo(models.User, {
+        foreignKey: "userId",
+      });
     }
   }
   Budget.init(
     {
       userId: { type: DataTypes.INTEGER, allowNull: false },
-      categoryId: { type: DataTypes.INTEGER, allowNull: false },
+      budgetName: { type: DataTypes.STRING, allowNull: false },
       budgetAmount: { type: DataTypes.INTEGER, allowNull: false },
+      resetDate: { type: DataTypes.DATE, allowNull: false },
     },
     {
       sequelize,

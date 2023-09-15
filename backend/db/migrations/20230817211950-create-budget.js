@@ -19,12 +19,19 @@ module.exports = {
           type: Sequelize.INTEGER,
           allowNull: false,
         },
+        budgetName: {
+          type: Sequelize.STRING,
+          allowNull: false,
+        },
         categoryId: {
           type: Sequelize.INTEGER,
-          allowNull: false,
         },
         budgetAmount: {
           type: Sequelize.INTEGER,
+          allowNull: false,
+        },
+        resetDate: {
+          type: Sequelize.DATE,
           allowNull: false,
         },
         createdAt: {
