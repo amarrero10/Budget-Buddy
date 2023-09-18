@@ -11,6 +11,7 @@ import * as sessionActions from "./store/session";
 import * as billsActions from "./store/bills";
 import * as remindersActions from "./store/reminders";
 import * as budgetsActions from "./store/budgets";
+import * as savingsActions from "./store/savings";
 
 import configureStore from "./store";
 
@@ -25,6 +26,7 @@ if (process.env.NODE_ENV !== "production") {
   window.billsActions = billsActions;
   window.remindersActions = remindersActions;
   window.budgetsActions = budgetsActions;
+  window.savingsActions = savingsActions;
 }
 
 function Root() {

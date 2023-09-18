@@ -10,6 +10,7 @@ import Bills from "./components/Bills";
 import Budget from "./components/Budget";
 import Settings from "./components/Settings";
 import Savings from "./components/Savings";
+import Menu from "./components/Menu";
 
 function App() {
   const dispatch = useDispatch();

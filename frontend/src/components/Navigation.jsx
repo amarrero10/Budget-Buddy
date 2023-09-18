@@ -5,7 +5,7 @@ import * as sessionActions from "../store/session";
 import logo from "../assets/logo.png";
 import Hamburger from "hamburger-react";
 import { Link } from "react-router-dom/cjs/react-router-dom";
-import { FaCheckSquare, FaCog, FaMoneyBillWave, FaRegEdit } from "react-icons/fa";
+import { FaBell, FaCheckSquare, FaCog, FaMoneyBillWave, FaRegEdit } from "react-icons/fa";
 
 function Navigation() {
   const history = useHistory();
@@ -36,7 +36,7 @@ function Navigation() {
 
         {/* Mobile Nav Bar Menu */}
         <ul
-          className={`md:hidden absolute mt-96 w-full px-8 ${
+          className={`md:hidden absolute mt-[450px] w-full px-8 ${
             isOpen === false ? "max-h-0 opacity-0" : "max-h-[500px] opacity-100"
           } text-center text-xl text-offwhite transition-all duration-500 ease-in-out overflow-hidden bg-sapphire`}
         >
@@ -55,19 +55,28 @@ function Navigation() {
           </Link>
           <hr />
 
+          <Link to="/savings">
+            <div className=" flex items-center justify-center py-4">
+              <FaCheckSquare className="mr-3" />
+              <li>Savings</li>
+            </div>
+          </Link>
+
+          <hr />
+          <Link to="/reminders">
+            <div className=" flex items-center justify-center py-4">
+              <FaBell className="mr-3" />
+              <li>Reminders</li>
+            </div>
+          </Link>
+          <hr />
           <Link to="/settings">
             <div className="flex items-center justify-center py-4">
               <FaCog className="mr-3" />
               <li>Settings</li>
             </div>
           </Link>
-          <hr />
-          <Link to="/savings">
-            <div className=" flex items-center justify-center py-4">
-              <FaCheckSquare className="mr-3" />
-              <li>Savings Goal</li>
-            </div>
-          </Link>
+
           <hr />
           <div>
             <button className="py-3 px-10 bg-crimson my-4 rounded-sm" onClick={logout}>
@@ -77,12 +86,7 @@ function Navigation() {
         </ul>
         {/* End Mobile Only */}
         {/* Desktop screens */}
-        <div className="sm:flex w-1/2 justify-between hidden">
-          <p className="-mt-3">Settings</p>
-          <p className="-mt-3">Test</p>
-          <p className="-mt-3">Test</p>
-          <p className="-mt-3">Test</p>
-        </div>
+
         <div className="hidden sm:block">
           <button
             className="  py-3 px-10 text-offwhite bg-crimson my-4 rounded-sm mr-2 -mt-2 "
@@ -91,7 +95,6 @@ function Navigation() {
             Log out
           </button>
         </div>
-        {/* End esktop Screens */}
       </div>
     </>
   );

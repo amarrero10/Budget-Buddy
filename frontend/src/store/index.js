@@ -5,12 +5,14 @@ import sessionReducer from "./session";
 import billsReducer from "./bills";
 import remindersReducer from "./reminders";
 import budgetsReducer from "./budgets";
+import savingsReducer from "./savings";
 
 const rootReducer = combineReducers({
   session: sessionReducer,
   bills: billsReducer,
   reminders: remindersReducer,
   budgets: budgetsReducer,
+  savings: savingsReducer,
 });
 
 let enhancer;

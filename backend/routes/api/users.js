@@ -62,56 +62,64 @@ router.get("/current/bills", requireAuth, async (req, res) => {
 router.get("/current/budgets", requireAuth, async (req, res) => {
   const user = req.user;
 
-  const budgets = await Budget.findAll({
-    where: {
-      userId: user.id,
-    },
-  });
+  if (user) {
+    const budgets = await Budget.findAll({
+      where: {
+        userId: user.id,
+      },
+    });
 
-  res.status(200).json({ Budgets: budgets });
+    res.status(200).json({ Budgets: budgets });
+  }
 });
 
 router.get("/current/savings-goals", requireAuth, async (req, res) => {
   const user = req.user;
 
-  const savingsGoals = await SavingGoal.findAll({
-    where: {
-      userId: user.id,
-    },
-  });
+  if (user) {
+    const savingsGoals = await SavingGoal.findAll({
+      where: {
+        userId: user.id,
+      },
+    });
 
-  res.status(200).json({ Savings: savingsGoals });
+    res.status(200).json({ Savings: savingsGoals });
+  }
 });
 
 router.get("/current/reminders", requireAuth, async (req, res) => {
   const user = req.user;
-
-  const reminders = await Reminder.findAll({
-    where: {
-      userId: user.id,
-    },
-    include: [
-      {
-        model: Bill,
-        attributes: ["billName"],
+  if (user) {
+    const reminders = await Reminder.findAll({
+      where: {
+        userId: user.id,
       },
-      {
-        model: SavingGoal,
-        attributes: ["goalName"],
-      },
-    ],
-  });
+      include: [
+        {
+          model: Bill,
+          attributes: ["billName"],
+        },
+        {
+          model: SavingGoal,
+          attributes: ["goalName"],
+        },
+      ],
+    });
 
-  res.status(200).json({ Reminders: reminders });
+    res.status(200).json({ Reminders: reminders });
+  }
 });
 
 router.get("/current/account", requireAuth, async (req, res) => {
   const user = req.user;
-  const userDetails = await User.findByPk(user.id, {
-    attributes: ["id", "firstName", "lastName", "email", "username", "createdAt", "updatedAt"],
-  });
 
-  res.status(200).json({ User: userDetails });
+  if (user) {
+    const userDetails = await User.findByPk(user.id, {
+      attributes: ["id", "firstName", "lastName", "email", "username", "createdAt", "updatedAt"],
+    });
+
+    res.status(200).json({ User: userDetails });
+  }
 });
 
 module.exports = router;

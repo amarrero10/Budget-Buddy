@@ -20,7 +20,6 @@ function LogInPage() {
     setErrors({});
     try {
       await dispatch(sessionActions.login({ credential, password }));
-      await dispatch(billsActions.fetchBills());
     } catch (res) {
       const data = await res.json();
       if (data && data.errors) {
