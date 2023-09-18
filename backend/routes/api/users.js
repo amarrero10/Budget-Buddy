@@ -3,10 +3,9 @@ const bcrypt = require("bcryptjs");
 const { Sequelize } = require("sequelize");
 const { Op } = require("sequelize");
 const { setTokenCookie, requireAuth } = require("../../utils/auth");
-const { User } = require("../../db/models");
+const { User, Bill, Budget, SavingGoal, Reminder } = require("../../db/models");
 const { check } = require("express-validator");
 const { handleValidationErrors } = require("../../utils/validation");
-const { Bill } = require("../../db/models");
 
 const router = express.Router();
 
@@ -48,8 +47,8 @@ router.post("/signup", validateSignup, async (req, res) => {
   });
 });
 
-// Get all bils of current user
-router.get("/current/bills", async (req, res) => {
+// Get all bills of current user
+router.get("/current/bills", requireAuth, async (req, res) => {
   const user = req.user;
 
   const bills = await Bill.findAll({
@@ -58,6 +57,61 @@ router.get("/current/bills", async (req, res) => {
     },
   });
   res.status(200).json({ Bills: bills });
+});
+
+router.get("/current/budgets", requireAuth, async (req, res) => {
+  const user = req.user;
+
+  const budgets = await Budget.findAll({
+    where: {
+      userId: user.id,
+    },
+  });
+
+  res.status(200).json({ Budgets: budgets });
+});
+
+router.get("/current/savings-goals", requireAuth, async (req, res) => {
+  const user = req.user;
+
+  const savingsGoals = await SavingGoal.findAll({
+    where: {
+      userId: user.id,
+    },
+  });
+
+  res.status(200).json({ Savings: savingsGoals });
+});
+
+router.get("/current/reminders", requireAuth, async (req, res) => {
+  const user = req.user;
+
+  const reminders = await Reminder.findAll({
+    where: {
+      userId: user.id,
+    },
+    include: [
+      {
+        model: Bill,
+        attributes: ["billName"],
+      },
+      {
+        model: SavingGoal,
+        attributes: ["goalName"],
+      },
+    ],
+  });
+
+  res.status(200).json({ Reminders: reminders });
+});
+
+router.get("/current/account", requireAuth, async (req, res) => {
+  const user = req.user;
+  const userDetails = await User.findByPk(user.id, {
+    attributes: ["id", "firstName", "lastName", "email", "username", "createdAt", "updatedAt"],
+  });
+
+  res.status(200).json({ User: userDetails });
 });
 
 module.exports = router;

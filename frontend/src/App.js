@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Route, Switch, Redirect, useHistory } from "react-router-dom";
-import HomePage from "./components/HomePage";
+import { Route, Switch, Redirect } from "react-router-dom";
+import Dashboard from "./components/Dashboard";
 import SignUpPage from "./components/SignUpPage";
 import * as sessionActions from "./store/session";
 import LogInPage from "./components/LogInPage";
@@ -14,16 +14,10 @@ import Savings from "./components/Savings";
 function App() {
   const dispatch = useDispatch();
   const sessionUser = useSelector((state) => state.session.user);
-  const history = useHistory();
 
   useEffect(() => {
     dispatch(sessionActions.restoreUser());
   }, [dispatch]);
-
-  if (sessionUser && window.location.pathname === "/") {
-    // Redirect to the "/home" path
-    history.push("/home");
-  }
 
   return (
     <>
@@ -35,8 +29,8 @@ function App() {
         <Route exact path="/signup">
           <SignUpPage />
         </Route>
-        <Route exact path="/home">
-          {sessionUser ? <HomePage /> : <Redirect to="/" />}
+        <Route exact path="/dashboard">
+          {sessionUser ? <Dashboard /> : <Redirect to="/" />}
         </Route>
         <Route exact path="/bills">
           {sessionUser ? <Bills /> : <Redirect to="/" />}

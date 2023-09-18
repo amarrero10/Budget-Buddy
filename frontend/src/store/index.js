@@ -2,9 +2,15 @@
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
 import sessionReducer from "./session";
+import billsReducer from "./bills";
+import remindersReducer from "./reminders";
+import budgetsReducer from "./budgets";
 
 const rootReducer = combineReducers({
   session: sessionReducer,
+  bills: billsReducer,
+  reminders: remindersReducer,
+  budgets: budgetsReducer,
 });
 
 let enhancer;

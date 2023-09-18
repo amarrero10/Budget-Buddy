@@ -16,7 +16,7 @@ function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  if (sessionUser) return <Redirect to="/home" />;
+  if (sessionUser) return <Redirect to="/dashboard" />;
 
   const signup = async (e) => {
     e.preventDefault();
@@ -31,7 +31,7 @@ function SignUpPage() {
         })
       );
 
-      history.push("/home");
+      history.push("/dashboard");
     } catch (err) {
       const data = await err.json();
       if (data && data.errors) {
