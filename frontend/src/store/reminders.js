@@ -1,6 +1,7 @@
 import { csrfFetch } from "./csrf";
 
 const SET_REMINDERS = "reminders/setReminders";
+const REMOVE_USER = "session/removeUser";
 
 const setReminders = (reminders) => ({
   type: SET_REMINDERS,
@@ -27,6 +28,10 @@ const remindersReducer = (state = initialState, action) => {
       return {
         ...state,
         reminders: action.payload,
+      };
+    case REMOVE_USER:
+      return {
+        ...initialState,
       };
     default:
       return state;

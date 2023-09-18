@@ -1,6 +1,7 @@
 import { csrfFetch } from "./csrf";
 
 const SET_BILLS = "bills/setBills";
+const REMOVE_USER = "session/removeUser";
 
 const setBills = (bills) => ({
   type: SET_BILLS,
@@ -27,6 +28,10 @@ const billsReducer = (state = initialState, action) => {
       return {
         ...state,
         bills: action.payload,
+      };
+    case REMOVE_USER:
+      return {
+        ...initialState,
       };
     default:
       return state;

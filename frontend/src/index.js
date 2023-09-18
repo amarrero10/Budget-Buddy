@@ -8,10 +8,10 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { restoreCSRF, csrfFetch } from "./store/csrf";
 import * as sessionActions from "./store/session";
-import * as billsActions from "./store/bills";
-import * as remindersActions from "./store/reminders";
-import * as budgetsActions from "./store/budgets";
-import * as savingsActions from "./store/savings";
+// import * as billsActions from "./store/bills";
+// import * as remindersActions from "./store/reminders";
+// import * as budgetsActions from "./store/budgets";
+// import * as savingsActions from "./store/savings";
 
 import configureStore from "./store";
 
@@ -23,10 +23,6 @@ if (process.env.NODE_ENV !== "production") {
   window.csrfFetch = csrfFetch;
   window.store = store;
   window.sessionActions = sessionActions;
-  window.billsActions = billsActions;
-  window.remindersActions = remindersActions;
-  window.budgetsActions = budgetsActions;
-  window.savingsActions = savingsActions;
 }
 
 function Root() {

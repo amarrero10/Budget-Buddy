@@ -1,0 +1,40 @@
+.landing-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+  color: #032a3e;
+}
+
+.landing-txt > h1 {
+  font-size: 2.6rem;
+  font-weight: 800;
+  font-style: italic;
+}
+
+.landing-txt > p {
+  font-size: 1.2rem;
+}
+
+.landing-btns {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  width: 350px;
+  margin-top: 50px;
+}
+
+.landing-btns * button {
+  padding: 10px 50px;
+  background: none;
+  border: 1.5px solid #032a3e;
+  border-radius: 7px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.landing-btns * button:hover {
+  background-color: #032a3e;
+  color: #fefefe;
+}

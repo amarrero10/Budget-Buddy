@@ -5,7 +5,6 @@ import * as remindersActions from "../store/reminders";
 import * as budgetsActions from "../store/budgets";
 import * as savingsActions from "../store/savings";
 import { Redirect } from "react-router-dom/cjs/react-router-dom";
-import Navigation from "./Navigation";
 import Menu from "./Menu";
 
 function Dashboard() {
@@ -25,26 +24,6 @@ function Dashboard() {
     }
   }, [dispatch, user]);
 
-  if (!user) {
-    return <Redirect to="/login" />;
-  }
-
-  // <h1>BILLS:</h1>;
-
-  // {
-  //   reminders ? (
-  //     reminders.map((reminder) => (
-  //       <div key={reminder.id}>
-  //         <h1>{reminder.reminder}</h1>
-
-  //         <p>{reminder.Bill ? `Bill: ${reminder.Bill.billName}` : ""}</p>
-  //         <p>{reminder.SavingGoal ? `Goal: ${reminder.SavingGoal.goalName}` : ""}</p>
-  //       </div>
-  //     ))
-  //   ) : (
-  //     <p>No reminders found</p>
-  //   );
-  // }
   let allBills = bills?.length;
   let totalBudget = 0;
   let totalSavings = 0;
@@ -60,22 +39,47 @@ function Dashboard() {
 
   return (
     <>
-      <div className="sm:flex h-screen px-2">
-        <div className="sm:w-1/6 px-2">
+      <div>
+        <div>
           <Menu />
         </div>
 
-        <div className="sm:w-5/6 ">
-          <div className="flex flex-col justify-between items-center sm:flex-row ">
-            <div className="sm:w-1/3 w-full p-4 shadow-xl">
-              {bills ? <p>Total bills: {allBills}</p> : <p>No bills found.</p>}
-            </div>
-            <div className="sm:w-1/3 w-full p-4 shadow-xl">
-              {budgets ? <p>Total Budget: ${totalBudget}</p> : <p>No Budget found.</p>}
-            </div>
-            <div className="sm:w-1/3 w-full p-4 shadow-xl">
-              {savings ? <p>Total Saved: ${totalSavings}</p> : <p>No Savings found</p>}
-            </div>
+        <div>
+          <div>
+            <div>{bills ? <p>Total bills: {allBills}</p> : <p>No bills found.</p>}</div>
+            <div>{budgets ? <p>Total Budget: ${totalBudget}</p> : <p>No Budget found.</p>}</div>
+            <div>{savings ? <p>Total Saved: ${totalSavings}</p> : <p>No Savings found</p>}</div>
+          </div>
+          <div>
+            <p>Recent Activity</p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Budget</th>
+                  <th>Transaction Type</th>
+                  <th>Amount</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>The Sliding Mr. Bones (Next Stop, Pottersville)</td>
+                  <td>The Sliding Mr. Bones (Next Stop, Pottersville)</td>
+                  <td>Malcolm Lockyer</td>
+                  <td>1961</td>
+                </tr>
+                <tr>
+                  <td>Witchy Woman</td>
+                  <td>The Eagles</td>
+                  <td>1972</td>
+                </tr>
+                <tr>
+                  <td>Shining Star</td>
+                  <td>Earth, Wind, and Fire</td>
+                  <td>1975</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

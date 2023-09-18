@@ -11,6 +11,7 @@ import Budget from "./components/Budget";
 import Settings from "./components/Settings";
 import Savings from "./components/Savings";
 import Menu from "./components/Menu";
+import Landing from "./components/Landing";
 
 function App() {
   const dispatch = useDispatch();
@@ -25,6 +26,9 @@ function App() {
       {sessionUser && <Navigation />}
       <Switch>
         <Route exact path="/">
+          <Landing />
+        </Route>
+        <Route exact path="/login">
           <LogInPage />
         </Route>
         <Route exact path="/signup">

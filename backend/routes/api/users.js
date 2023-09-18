@@ -50,13 +50,14 @@ router.post("/signup", validateSignup, async (req, res) => {
 // Get all bills of current user
 router.get("/current/bills", requireAuth, async (req, res) => {
   const user = req.user;
-
-  const bills = await Bill.findAll({
-    where: {
-      userId: user.id,
-    },
-  });
-  res.status(200).json({ Bills: bills });
+  if (user) {
+    const bills = await Bill.findAll({
+      where: {
+        userId: user.id,
+      },
+    });
+    res.status(200).json({ Bills: bills });
+  }
 });
 
 router.get("/current/budgets", requireAuth, async (req, res) => {

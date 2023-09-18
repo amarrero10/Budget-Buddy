@@ -1,6 +1,7 @@
 import { csrfFetch } from "./csrf";
 
 const SET_SAVINGS = "savings/setSavings";
+const REMOVE_USER = "session/removeUser";
 
 const setSavings = (savings) => ({
   type: SET_SAVINGS,
@@ -14,9 +15,11 @@ export const fetchSavings = () => async (dispatch) => {
     throw new Error("Failed to fetch savings data");
   }
 
-  const data = await res.json();
-
-  dispatch(setSavings(data.Savings));
+  if (res.ok) {
+    const data = await res.json();
+    dispatch(setSavings(data.Savings));
+    return data;
+  }
 };
 
 const initialState = { savings: null };
@@ -27,6 +30,10 @@ const savingsReducer = (state = initialState, action) => {
       return {
         ...state,
         savings: action.payload,
+      };
+    case REMOVE_USER:
+      return {
+        ...initialState,
       };
     default:
       return state;

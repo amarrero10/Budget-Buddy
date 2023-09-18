@@ -1,6 +1,7 @@
 import { csrfFetch } from "./csrf";
 
 const SET_BUDGETS = "budgets/setBudgets";
+const REMOVE_USER = "session/removeUser";
 
 const setBudgets = (budgets) => ({
   type: SET_BUDGETS,
@@ -27,6 +28,10 @@ const budgetsReducer = (state = initialState, action) => {
       return {
         ...state,
         budgets: action.payload,
+      };
+    case REMOVE_USER:
+      return {
+        ...initialState,
       };
     default:
       return state;
