@@ -2,15 +2,30 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 900px;
+  height: 490px;
+  margin: 0 auto;
   text-align: center;
-  color: #032a3e;
+  color: #fefefe;
+  background-color: #032a3e;
+  box-shadow: -1px 3px 29px 0px rgba(3, 42, 62, 0.79);
 }
 
 .landing-txt > h1 {
   font-size: 2.6rem;
   font-weight: 800;
   font-style: italic;
+}
+
+.landing-container * img {
+  height: 489.5px;
+  width: 450px;
+  object-fit: cover;
+  margin-top: 6px;
 }
 
 .landing-txt > p {
@@ -28,7 +43,8 @@
 .landing-btns * button {
   padding: 10px 50px;
   background: none;
-  border: 1.5px solid #032a3e;
+  border: 1.5px solid #fefefe;
+  color: #fefefe;
   border-radius: 7px;
   font-size: 16px;
   cursor: pointer;

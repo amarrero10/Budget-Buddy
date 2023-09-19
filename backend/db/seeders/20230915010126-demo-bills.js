@@ -20,6 +20,7 @@ module.exports = {
           billingStartMonth: "October",
           billingFrequency: "monthly",
           billAmount: 120,
+          paid: false,
           budgetId: 1,
         },
         {
@@ -30,6 +31,7 @@ module.exports = {
           billingStartMonth: "October",
           billingFrequency: "monthly",
           billAmount: 60,
+          paid: false,
           budgetId: 1,
         },
         {
@@ -40,6 +42,7 @@ module.exports = {
           billingStartMonth: "October",
           billingFrequency: "monthly",
           billAmount: 80,
+          paid: true,
           budgetId: 1,
         },
         {
@@ -50,6 +53,7 @@ module.exports = {
           billingStartMonth: "October",
           billingFrequency: "monthly",
           billAmount: 75,
+          paid: false,
           budgetId: 1,
         },
         {
@@ -60,24 +64,28 @@ module.exports = {
           billingStartMonth: "October",
           billingFrequency: "monthly",
           billAmount: 300,
+          paid: false,
           budgetId: 1,
         },
         {
           userId: 1,
           billName: "gas",
           billAmount: 50,
+          paid: true,
           budgetId: 1,
         },
         {
           userId: 1,
           billName: "Taco Bell",
           billAmount: 10,
+          paid: true,
           budgetId: 1,
         },
         {
           userId: 1,
           billName: "McDonalds",
           billAmount: 12,
+          paid: true,
           budgetId: 1,
         },
       ],

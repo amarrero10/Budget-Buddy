@@ -21,6 +21,17 @@ module.exports = (sequelize, DataTypes) => {
       userId: { type: DataTypes.INTEGER, allowNull: false },
       budgetName: { type: DataTypes.STRING, allowNull: false },
       budgetAmount: { type: DataTypes.INTEGER, allowNull: false },
+      budgetLeft: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          isLessThanOrEqual: function (value) {
+            if (value > this.budgetAmount) {
+              throw new Error("Starting Budget must be less than or equal to Budget Amount.");
+            }
+          },
+        },
+      },
       budgetDay: {
         type: DataTypes.INTEGER,
         validate: {

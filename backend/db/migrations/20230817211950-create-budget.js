@@ -30,6 +30,10 @@ module.exports = {
           type: Sequelize.INTEGER,
           allowNull: false,
         },
+        budgetLeft: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+        },
         budgetDay: {
           type: Sequelize.INTEGER,
         },

@@ -55,7 +55,14 @@ router.get("/current/bills", requireAuth, async (req, res) => {
       where: {
         userId: user.id,
       },
+      include: [
+        {
+          model: Budget,
+          attributes: ["budgetAmount", "budgetName"],
+        },
+      ],
     });
+
     res.status(200).json({ Bills: bills });
   }
 });

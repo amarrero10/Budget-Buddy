@@ -71,7 +71,15 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      billAmount: { type: DataTypes.INTEGER, allowNull: false },
+      billAmount: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      paid: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
       categoryId: { type: DataTypes.INTEGER },
     },
     {

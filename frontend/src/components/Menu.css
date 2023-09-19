@@ -1,0 +1,21 @@
+.menu {
+  width: 150px;
+}
+
+.menu-option {
+  display: flex;
+  align-items: center;
+  margin-left: 7px;
+  padding: 0px 5px;
+  border-radius: 7px;
+}
+
+.menu-option:hover {
+  color: #fefefe;
+  background-color: #be3529;
+}
+
+.menu-icon {
+  font-size: 20px;
+  margin-right: 6px;
+}

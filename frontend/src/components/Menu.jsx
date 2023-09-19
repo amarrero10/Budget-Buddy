@@ -3,41 +3,42 @@ import { FaClipboardList, FaCog } from "react-icons/fa";
 import { FaRegBell, FaSackDollar } from "react-icons/fa6";
 import { GoGraph } from "react-icons/go";
 import { Link } from "react-router-dom";
+import "./Menu.css";
 
 function Menu() {
   return (
-    <div>
+    <div className="menu">
       <Link to="/bills">
-        <div>
-          <FaClipboardList />
+        <div className="menu-option">
+          <FaClipboardList className="menu-icon" />
           <p>Bills</p>
         </div>
       </Link>
 
       <Link to="/budgets">
-        <div>
-          <GoGraph />
+        <div className="menu-option">
+          <GoGraph className="menu-icon" />
           <p>Budgets</p>
         </div>
       </Link>
 
       <Link to="/savings">
-        <div>
-          <FaSackDollar />
+        <div className="menu-option">
+          <FaSackDollar className="menu-icon" />
           <p>Savings</p>
         </div>
       </Link>
 
       <Link to="/reminders">
-        <div>
-          <FaRegBell />
+        <div className="menu-option">
+          <FaRegBell className="menu-icon" />
           <p>Reminders</p>
         </div>
       </Link>
 
       <Link to="/account">
-        <div>
-          <FaCog />
+        <div className="menu-option">
+          <FaCog className="menu-icon" />
           <p>Settings</p>
         </div>
       </Link>
