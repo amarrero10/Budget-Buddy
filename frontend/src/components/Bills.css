@@ -1,0 +1,79 @@
+.bills-page {
+  display: flex;
+}
+
+.bill-tables {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+/* Styles for the custom table */
+.custom-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* Styles for table headers */
+.table-header {
+  background-color: #032a3e;
+  color: #fff;
+  padding: 10px;
+  text-align: left;
+}
+
+/* Styles for table rows */
+.custom-table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Styles for table cell (td) */
+.custom-table td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Hover effect for table rows */
+.custom-table tbody tr:hover {
+  background-color: #be3529;
+  color: #fff;
+}
+
+.paid {
+  outline: #032a3e;
+  color: green;
+}
+
+.edit-delete {
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.bill-icon {
+  padding-right: 30px;
+}
+
+.bill-paid {
+  display: flex;
+  align-items: center;
+}
+
+.check-button {
+  background-color: transparent;
+  border: 1px solid #032a3e; /* Add your preferred border styles */
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.check-button.checked {
+  background-color: green; /* Add your preferred background color for the checked state */
+  color: #fefefe; /* Text color for checked state */
+  border: 1px solid green; /* Border color for checked state */
+}
+
+.bill-btn {
+  position: absolute;
+  top: 10%;
+  left: 19%;
+  transform: translate(-10%, -19%);
+}
