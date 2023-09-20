@@ -27,6 +27,10 @@
   align-items: center;
 }
 
+.dashboard > p {
+  text-align: center;
+}
+
 .dashboard-card-one > h2 {
   margin-top: -3px;
   font-weight: 500;
@@ -134,4 +138,12 @@
 .savings {
   margin-bottom: -15px;
   margin-top: 50px;
+}
+
+.recent {
+  font-size: 1.8rem;
+}
+
+.table {
+  padding-bottom: 30px;
 }
