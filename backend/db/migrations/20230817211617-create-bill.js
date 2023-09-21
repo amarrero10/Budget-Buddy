@@ -44,7 +44,7 @@ module.exports = {
         },
         paid: {
           type: Sequelize.BOOLEAN,
-          allowNull: false,
+          defaultValue: false,
         },
         budgetId: {
           type: Sequelize.INTEGER,

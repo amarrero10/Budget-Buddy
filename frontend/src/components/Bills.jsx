@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as billsActions from "../store/bills";
 import Menu from "./Menu";
@@ -55,18 +55,77 @@ function calculateDueDate(bill) {
 }
 
 function Bills() {
-  const dispatch = useDispatch();
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedBill, setSelectedBill] = useState(null);
   const user = useSelector((state) => state.session.user.user);
   const bills = useSelector((state) => state.bills.bills);
+  const bill = useSelector((state) => state.bills?.bill?.billId.bill);
+  const budgets = useSelector((state) => state.budgets.budgets);
+  const dispatch = useDispatch();
+
+  // EDIT BILL STUFF
+  const [formData, setFormData] = useState({
+    billName: "",
+    paymentLink: "",
+    billingDay: "",
+    billingStartMonth: "",
+    billingFrequency: "",
+    billAmount: "",
+    budgetId: "",
+  });
+
+  const handleEdit = (billId) => {
+    setOpenModal(true);
+    setSelectedBill(billId);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    setOpenModal(false);
+
+    dispatch(billsActions.editABill(selectedBill, formData));
+  };
+
+  const handleInput = (e) => {
+    const { name, value } = e.target;
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  useEffect(() => {
+    if (selectedBill) {
+      dispatch(billsActions.fetchBill(selectedBill));
+    }
+  }, [selectedBill, dispatch]);
+
+  useEffect(() => {
+    if (bill) {
+      setFormData({
+        billName: bill.billName || "",
+        paymentLink: bill.paymentLink || "",
+        billingDay: bill.billingDay || "",
+        billingStartMonth: bill.billingStartMonth || "",
+        billingFrequency: bill.billingFrequency || "",
+        billAmount: bill.billAmount || "",
+        budgetId: bill.budgetId || "",
+        paid: bill.paid !== undefined ? bill.paid : false,
+      });
+    }
+  }, [bill]);
+
+  console.log("FORMDATA", formData);
+
+  // END EDIT BILL STUFF
+
   const handleDelete = () => {
     console.log("clicked");
   };
   const handleMarkAsPaid = (billId, newPaidStatus) => {
     dispatch(billsActions.toggleBillPaidStatus(billId, newPaidStatus));
-  };
-
-  const handleEdit = () => {
-    console.log("clicked");
   };
 
   useEffect(() => {}, [bills]);
@@ -86,6 +145,28 @@ function Bills() {
 
   recurringBills.sort((a, b) => calculateDueDate(a) - calculateDueDate(b));
 
+  const numberDates = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
+    27, 28, 29, 30, 31,
+  ];
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const frequency = ["monthly", "quarterly", "annually"];
+
   return (
     <>
       <button className="nav-btn bill-btn">Add A Bill</button>
@@ -103,11 +184,12 @@ function Bills() {
                   <th className="table-header">Name</th>
                   <th className="table-header">Amount</th>
                   <th className="table-header">Due Date</th>
-                  <th className="table-header">Edit/Delete</th>
+                  <th className="table-header">Edit</th>
+                  <th className="table-header">Delete</th>
                 </tr>
               </thead>
               <tbody>
-                {recurringBills?.map((bill) => (
+                {recurringBills?.map((bill, index) => (
                   <tr key={bill.id} className={bill.paid ? "paid" : ""}>
                     <td>
                       <div className="bill-paid">
@@ -125,8 +207,10 @@ function Bills() {
                       {bill?.dueDate ? bill.dueDate : calculateDueDate(bill)?.toLocaleDateString()}
                     </td>
 
-                    <td className="edit-delete">
+                    <td className="edit">
                       <BsPencilSquare onClick={() => handleEdit(bill.id)} className="bill-icon" />
+                    </td>
+                    <td className="delete">
                       <BsTrash3 onClick={() => handleDelete(bill.id)} className="bill-delete" />
                     </td>
                   </tr>
@@ -159,6 +243,101 @@ function Bills() {
           </div>
         </div>
       </div>
+
+      {openModal && selectedBill && (
+        <div className="modal">
+          <div className="modal-content">
+            <form onSubmit={handleSubmit}>
+              <input type="hidden" name="billId" value={selectedBill} />
+              <div>
+                <label htmlFor="name">Name</label>
+                <input
+                  type="text"
+                  onChange={handleInput}
+                  id="name"
+                  name="billName"
+                  value={formData.billName}
+                ></input>
+              </div>
+              <div>
+                <label htmlFor="payment">Payment Link</label>
+                <input
+                  onChange={handleInput}
+                  id="payment"
+                  name="paymentLink"
+                  value={formData.paymentLink}
+                ></input>
+              </div>
+              <div>
+                <p>Due Date:</p>
+                <div>
+                  <label>Date:</label>
+                  <select onChange={handleInput} name="billingDay" value={formData.billingDay}>
+                    <option>--</option>
+                    {numberDates.map((date, idx) => (
+                      <option key={idx}>{date}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label>Month:</label>
+                  <select
+                    onChange={handleInput}
+                    name="billingStartMonth"
+                    value={formData.billingStartMonth}
+                  >
+                    <option>--</option>
+                    {months.map((month, idx) => (
+                      <option key={idx} value={month}>
+                        {month}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label>Frequency</label>
+                  <select
+                    onChange={handleInput}
+                    name="billingFrequency"
+                    value={formData.billingFrequency}
+                  >
+                    <option>--</option>
+                    {frequency.map((el, idx) => (
+                      <option key={idx} value={el}>
+                        {el}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label htmlFor="billAMount">Amount</label>
+                <input
+                  type="number"
+                  onChange={handleInput}
+                  id="billAmount"
+                  name="billAmount"
+                  value={formData.billAmount}
+                  placeholder="200"
+                ></input>
+              </div>
+              <div>
+                <label>Budget</label>
+                <select onChange={handleInput} name="budgetId" value={formData.budgetId}>
+                  <option>--</option>
+                  {budgets?.map((budget, idx) => (
+                    <option key={idx} value={budget.id}>
+                      {budget.budgetName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button type="submit">Save Changes</button>
+            </form>
+            <button onClick={() => setOpenModal(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

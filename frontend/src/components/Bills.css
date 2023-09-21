@@ -44,7 +44,12 @@
   color: green;
 }
 
-.edit-delete {
+.edit {
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.delete {
   cursor: pointer;
   font-size: 18px;
 }

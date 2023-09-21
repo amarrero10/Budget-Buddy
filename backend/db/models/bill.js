@@ -77,7 +77,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       paid: {
         type: DataTypes.BOOLEAN,
-        allowNull: false,
         defaultValue: false,
       },
       categoryId: { type: DataTypes.INTEGER },
