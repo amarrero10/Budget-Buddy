@@ -17,7 +17,7 @@ function calculateDueDate(bill) {
     // Calculate the next billing date based on billing frequency
     let dueDate = new Date(currentDate);
 
-    if (billingFrequency === "monthly") {
+    if (billingFrequency === "every month" || billingFrequency === "monthly") {
       // Calculate the next month's billing date
       const currentMonth = currentDate.getMonth();
       const currentYear = currentDate.getFullYear();
@@ -29,7 +29,7 @@ function calculateDueDate(bill) {
       }
 
       dueDate.setDate(billingDay);
-    } else if (billingFrequency === "annually") {
+    } else if (billingFrequency === "annually" || billingFrequency === "once a year") {
       // Calculate the next year's billing date
       const currentYear = currentDate.getFullYear();
       const currentMonth = currentDate.getMonth();
@@ -39,10 +39,27 @@ function calculateDueDate(bill) {
         // Increment the due date by one year
         dueDate.setFullYear(dueDate.getFullYear() + 1);
       }
+    } else if (billingFrequency === "quarterly" || billingFrequency === "every quarter") {
+      // Calculate quarterly billing date
+      const currentMonth = currentDate.getMonth();
+      const currentYear = currentDate.getFullYear();
+      const currentDay = currentDate.getDate();
+
+      // Determine the billing quarter
+      const billingQuarter = Math.floor(currentMonth / 3 + 1);
+
+      // Calculate the next quarter's billing date
+      const nextQuarter = billingQuarter === 4 ? 1 : billingQuarter + 1;
+
+      if (billingDay <= currentDay && billingQuarter) {
+        // Billing day is today or earlier in the current quarter, move to next quarter
+        dueDate.setMonth(nextQuarter * 3 - 1);
+      } else {
+        dueDate.setMonth(nextQuarter * 3 - 1);
+      }
+
+      dueDate.setDate(billingDay);
     } else {
-      // Handle other billing frequencies as needed
-      // For example, handle quarterly, semi-annual, etc.
-      // You can add additional logic here
       return null; // Return null for unsupported frequencies
     }
 
@@ -55,11 +72,27 @@ function calculateDueDate(bill) {
 }
 
 function Bills() {
-  const [openModal, setOpenModal] = useState(false);
+  const [editOpenModal, setEditOpenModal] = useState(false);
+  const [editOneTimeBillModal, setEditOneTimeBillModal] = useState(false);
+  const [addOpenModal, setAddOpenModal] = useState(false);
   const [selectedBill, setSelectedBill] = useState(null);
-  const user = useSelector((state) => state.session.user.user);
+  const [isRecurring, setIsRecurring] = useState(null);
+
+  const handleRadioChange = (e) => {
+    const value = e.target.value === "true"; // Convert the string to a boolean
+
+    setIsRecurring(value); // Update the isRecurring state correctly
+
+    setAddFormData((prevFormData) => ({
+      ...prevFormData,
+      isRecurring: value, // Update the isRecurring field in the formData
+    }));
+
+    console.log(value); // Log the correct value
+  };
+
   const bills = useSelector((state) => state.bills.bills);
-  const bill = useSelector((state) => state.bills?.bill?.billId.bill);
+  const bill = useSelector((state) => state.bills?.bill?.billId?.bill);
   const budgets = useSelector((state) => state.budgets.budgets);
   const dispatch = useDispatch();
 
@@ -74,17 +107,61 @@ function Bills() {
     budgetId: "",
   });
 
+  const [oneTimeBillData, setOneTimeBillData] = useState({
+    billName: "",
+    billAmount: "",
+    budgetId: "",
+  });
+
+  const [addFormData, setAddFormData] = useState({
+    billName: "",
+    paymentLink: "",
+    billingDay: "",
+    billingStartMonth: "",
+    billingFrequency: "",
+    billAmount: "",
+    dueDate: "",
+    budgetId: "",
+    paid: "",
+    isRecurring: "",
+  });
+
   const handleEdit = (billId) => {
-    setOpenModal(true);
+    setEditOpenModal(true);
     setSelectedBill(billId);
   };
 
-  const handleSubmit = (e) => {
+  const handleOneTimeEdit = (billId) => {
+    setEditOneTimeBillModal(true);
+    setSelectedBill(billId);
+  };
+  const openAddModal = () => {
+    setAddOpenModal(true);
+  };
+
+  const handleEditSubmit = (e) => {
     e.preventDefault();
 
-    setOpenModal(false);
+    setEditOpenModal(false);
 
     dispatch(billsActions.editABill(selectedBill, formData));
+  };
+
+  const handleOneTimeEditSubmit = (e) => {
+    e.preventDefault();
+    setEditOneTimeBillModal(false);
+    dispatch(billsActions.editABill(selectedBill, oneTimeBillData));
+  };
+
+  const handleAddBillSubmit = (e) => {
+    e.preventDefault();
+
+    setAddOpenModal(false);
+
+    const updatedFormData = { ...addFormData, isRecurring: isRecurring };
+
+    dispatch(billsActions.addBill(updatedFormData));
+    console.log("ADD BILL", addFormData);
   };
 
   const handleInput = (e) => {
@@ -92,6 +169,23 @@ function Bills() {
 
     setFormData({
       ...formData,
+      [name]: value,
+    });
+  };
+  const oneTimeHandleInput = (e) => {
+    const { name, value } = e.target;
+
+    setOneTimeBillData({
+      ...oneTimeBillData,
+      [name]: value,
+    });
+  };
+
+  const addHandleInput = (e) => {
+    const { name, value } = e.target;
+
+    setAddFormData({
+      ...addFormData,
       [name]: value,
     });
   };
@@ -117,13 +211,22 @@ function Bills() {
     }
   }, [bill]);
 
-  console.log("FORMDATA", formData);
+  useEffect(() => {
+    if (bill) {
+      setOneTimeBillData({
+        billName: bill.billName || "",
+        billAmount: bill.billAmount || "",
+        budgetId: bill.budgetId || "",
+      });
+    }
+  }, [bill]);
 
   // END EDIT BILL STUFF
 
-  const handleDelete = () => {
-    console.log("clicked");
+  const handleDelete = (billId) => {
+    dispatch(billsActions.deleteABill(billId));
   };
+
   const handleMarkAsPaid = (billId, newPaidStatus) => {
     dispatch(billsActions.toggleBillPaidStatus(billId, newPaidStatus));
   };
@@ -145,6 +248,13 @@ function Bills() {
 
   recurringBills.sort((a, b) => calculateDueDate(a) - calculateDueDate(b));
 
+  oneTimeBills.sort((a, b) => {
+    const dateA = new Date(a.dueDate).getTime();
+    const dateB = new Date(b.dueDate).getTime();
+
+    return dateA - dateB;
+  });
+
   const numberDates = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
     27, 28, 29, 30, 31,
@@ -165,11 +275,13 @@ function Bills() {
     "December",
   ];
 
-  const frequency = ["monthly", "quarterly", "annually"];
+  const frequency = ["every month", "every quarter", "once a year"];
 
   return (
     <>
-      <button className="nav-btn bill-btn">Add A Bill</button>
+      <button className="nav-btn bill-btn" onClick={openAddModal}>
+        Add A Bill
+      </button>
       <div className="bills-page">
         <div>
           <Menu />
@@ -226,6 +338,8 @@ function Bills() {
                   <th className="table-header">Name</th>
                   <th className="table-header">Amount</th>
                   <th className="table-header">Date</th>
+                  <th className="table-header">Edit</th>
+                  <th className="table-header">Delete</th>
                 </tr>
               </thead>
               <tbody>
@@ -233,8 +347,15 @@ function Bills() {
                   <tr key={bill.id}>
                     <td>{bill.billName}</td>
                     <td>{bill.billAmount}</td>
-                    <td>
-                      {bill?.dueDate ? bill.dueDate : calculateDueDate(bill)?.toLocaleDateString()}
+                    <td>{bill?.dueDate}</td>
+                    <td className="edit">
+                      <BsPencilSquare
+                        onClick={() => handleOneTimeEdit(bill.id)}
+                        className="bill-icon"
+                      />
+                    </td>
+                    <td className="delete">
+                      <BsTrash3 onClick={() => handleDelete(bill.id)} className="bill-delete" />
                     </td>
                   </tr>
                 ))}
@@ -244,10 +365,10 @@ function Bills() {
         </div>
       </div>
 
-      {openModal && selectedBill && (
+      {editOpenModal && selectedBill && (
         <div className="modal">
           <div className="modal-content">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleEditSubmit}>
               <input type="hidden" name="billId" value={selectedBill} />
               <div>
                 <label htmlFor="name">Name</label>
@@ -334,9 +455,196 @@ function Bills() {
               </div>
               <button type="submit">Save Changes</button>
             </form>
-            <button onClick={() => setOpenModal(false)}>Cancel</button>
+            <button onClick={() => setEditOpenModal(false)}>Cancel</button>
           </div>
         </div>
+      )}
+
+      {editOneTimeBillModal && selectedBill.dueDate !== null && (
+        <div className="modal">
+          <div className="modal-content">
+            <form onSubmit={handleOneTimeEditSubmit}>
+              <input type="hidden" name="billId" value={selectedBill} />
+              <div>
+                <label htmlFor="name">Name</label>
+                <input
+                  type="text"
+                  onChange={oneTimeHandleInput}
+                  id="name"
+                  name="billName"
+                  value={oneTimeBillData.billName}
+                ></input>
+              </div>
+
+              <div>
+                <label htmlFor="billAMount">Amount</label>
+                <input
+                  type="number"
+                  onChange={oneTimeHandleInput}
+                  id="billAmount"
+                  name="billAmount"
+                  value={oneTimeBillData.billAmount}
+                  placeholder="200"
+                ></input>
+              </div>
+              <div>
+                <label>Budget</label>
+                <select
+                  onChange={oneTimeHandleInput}
+                  name="budgetId"
+                  value={oneTimeBillData.budgetId}
+                >
+                  <option>--</option>
+                  {budgets?.map((budget, idx) => (
+                    <option key={idx} value={budget.id}>
+                      {budget.budgetName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button type="submit">Save Changes</button>
+            </form>
+            <button onClick={() => setEditOpenModal(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {addOpenModal && (
+        <>
+          <div className="modal">
+            <div className="modal-content">
+              <form onSubmit={handleAddBillSubmit}>
+                <div>
+                  <label htmlFor="name">Name</label>
+                  <input
+                    type="text"
+                    onChange={addHandleInput}
+                    id="name"
+                    name="billName"
+                    value={addFormData.billName}
+                  ></input>
+                </div>
+                <div>
+                  <label>Is it recurring?</label>
+                  <input
+                    type="radio"
+                    name="isRecurring"
+                    value="true"
+                    checked={isRecurring === true}
+                    onChange={handleRadioChange}
+                  />{" "}
+                  Yes
+                  <input
+                    type="radio"
+                    name="isRecurring"
+                    value="false"
+                    checked={isRecurring === false}
+                    onChange={handleRadioChange}
+                  />{" "}
+                  No
+                </div>
+                {isRecurring && (
+                  <div>
+                    <label htmlFor="payment">Payment Link</label>
+                    <input
+                      onChange={addHandleInput}
+                      id="payment"
+                      name="paymentLink"
+                      value={addFormData.paymentLink}
+                    ></input>
+                  </div>
+                )}
+
+                <div>
+                  {isRecurring ? (
+                    <>
+                      <div>
+                        <p>Next Due Date:</p>
+                        <label>Date:</label>
+                        <select
+                          onChange={addHandleInput}
+                          name="billingDay"
+                          value={addFormData.billingDay}
+                        >
+                          <option>--</option>
+                          {numberDates.map((date, idx) => (
+                            <option key={idx}>{date}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label>Month:</label>
+                        <select
+                          onChange={addHandleInput}
+                          name="billingStartMonth"
+                          value={addFormData.billingStartMonth}
+                        >
+                          <option>--</option>
+                          {months.map((month, idx) => (
+                            <option key={idx} value={month}>
+                              {month}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label>Frequency</label>
+                        <select
+                          onChange={addHandleInput}
+                          name="billingFrequency"
+                          value={addFormData.billingFrequency}
+                        >
+                          <option>--</option>
+                          {frequency.map((el, idx) => (
+                            <option key={idx} value={el}>
+                              {el}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <input type="hidden" name="paid" value={(addFormData.paid = false)} />
+                    </>
+                  ) : (
+                    <>
+                      <label>Date Paid:</label>
+                      <input
+                        type="date"
+                        onChange={addHandleInput}
+                        name="dueDate"
+                        value={addFormData.dueDate}
+                      ></input>
+                      <input type="hidden" name="paid" value={(addFormData.paid = true)} />
+                    </>
+                  )}
+                </div>
+                <div>
+                  <label htmlFor="billAMount">Amount</label>
+                  <input
+                    type="number"
+                    onChange={addHandleInput}
+                    id="billAmount"
+                    name="billAmount"
+                    value={addFormData.billAmount}
+                    placeholder="200"
+                  ></input>
+                </div>
+                <div>
+                  <label>Budget</label>
+                  <select onChange={addHandleInput} name="budgetId" value={addFormData.budgetId}>
+                    <option>--</option>
+                    {budgets?.map((budget, idx) => (
+                      <option key={idx} value={budget.id}>
+                        {budget.budgetName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <button type="submit">Save Changes</button>
+              </form>
+              <button onClick={() => setAddOpenModal(false)}>Cancel</button>
+            </div>
+          </div>
+        </>
       )}
     </>
   );

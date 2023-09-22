@@ -24,7 +24,7 @@ function calculateDueDate(bill) {
     // Calculate the next billing date based on billing frequency
     let dueDate = new Date(currentDate);
 
-    if (billingFrequency === "monthly") {
+    if (billingFrequency === "every month" || billingFrequency === "monthly") {
       // Calculate the next month's billing date
       const currentMonth = currentDate.getMonth();
       const currentYear = currentDate.getFullYear();
@@ -36,7 +36,7 @@ function calculateDueDate(bill) {
       }
 
       dueDate.setDate(billingDay);
-    } else if (billingFrequency === "annually") {
+    } else if (billingFrequency === "annually" || billingFrequency === "once a year") {
       // Calculate the next year's billing date
       const currentYear = currentDate.getFullYear();
       const currentMonth = currentDate.getMonth();
@@ -46,10 +46,27 @@ function calculateDueDate(bill) {
         // Increment the due date by one year
         dueDate.setFullYear(dueDate.getFullYear() + 1);
       }
+    } else if (billingFrequency === "quarterly" || billingFrequency === "every quarter") {
+      // Calculate quarterly billing date
+      const currentMonth = currentDate.getMonth();
+      const currentYear = currentDate.getFullYear();
+      const currentDay = currentDate.getDate();
+
+      // Determine the billing quarter
+      const billingQuarter = Math.floor(currentMonth / 3 + 1);
+
+      // Calculate the next quarter's billing date
+      const nextQuarter = billingQuarter === 4 ? 1 : billingQuarter + 1;
+
+      if (billingDay <= currentDay && billingQuarter) {
+        // Billing day is today or earlier in the current quarter, move to next quarter
+        dueDate.setMonth(nextQuarter * 3 - 1);
+      } else {
+        dueDate.setMonth(nextQuarter * 3 - 1);
+      }
+
+      dueDate.setDate(billingDay);
     } else {
-      // Handle other billing frequencies as needed
-      // For example, handle quarterly, semi-annual, etc.
-      // You can add additional logic here
       return null; // Return null for unsupported frequencies
     }
 

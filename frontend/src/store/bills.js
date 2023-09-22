@@ -5,6 +5,7 @@ const SET_BILL = "bills/setBill";
 const MARK_BILL_AS_PAID = "bills/markBillAsPaid";
 const EDIT_A_BILL = "bills/editBill";
 const REMOVE_USER = "session/removeUser";
+const DELETE_BILL = "bills/deleteABill";
 
 const setBills = (bills) => ({
   type: SET_BILLS,
@@ -24,6 +25,11 @@ const markBillAsPaid = (billId) => ({
 const editBill = (billId, editedBill) => ({
   type: EDIT_A_BILL,
   payload: { billId, editedBill },
+});
+
+const deleteBill = (billId) => ({
+  type: DELETE_BILL,
+  payload: billId,
 });
 
 export const fetchBills = () => async (dispatch) => {
@@ -72,9 +78,57 @@ export const toggleBillPaidStatus = (billId, newPaidStatus) => async (dispatch, 
   dispatch(fetchBills());
 };
 
+export const addBill = (formData) => async (dispatch) => {
+  console.log("addBill form data", formData);
+  // Check if the bill is recurring
+  const isRecurring = formData.isRecurring === true;
+
+  console.log("IS RECUR", isRecurring);
+
+  // Create a formData object with the common fields
+  const commonData = {
+    billName: formData.billName,
+    paymentLink: formData.paymentLink,
+    billAmount: formData.billAmount,
+    budgetId: formData.budgetId,
+  };
+
+  const finalFormData = isRecurring
+    ? {
+        ...commonData,
+        billingDay: formData.billingDay,
+        billingStartMonth: formData.billingStartMonth,
+        billingFrequency: formData.billingFrequency,
+        paid: false, // Set to false for recurring bills
+      }
+    : {
+        ...commonData,
+        dueDate: formData.dueDate,
+        paid: true, // Set to true for one-time bills
+      };
+
+  console.log("FINAL FORM ", finalFormData);
+
+  const res = await csrfFetch(`/api/bills/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(finalFormData),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to add a new bill");
+  }
+
+  const data = await res.json();
+
+  dispatch(setBill(data.id));
+  dispatch(fetchBills());
+};
+
 export const editABill = (billId, formData) => async (dispatch, getState) => {
   const state = getState();
-  console.log("editABill action called"); // Add this line
   const bill = state.bills.bills.find((bill) => bill.id === billId);
 
   if (!bill) {
@@ -89,13 +143,43 @@ export const editABill = (billId, formData) => async (dispatch, getState) => {
     body: JSON.stringify(formData),
   });
 
+  console.log("FORM DATA", formData);
+
   if (!res.ok) {
     throw new Error("Failed to update the bill");
   }
 
-  console.log("FORMDATA", formData);
   dispatch(editBill(billId, formData));
   // dispatch(fetchBills());
+};
+
+export const deleteABill = (billId) => async (dispatch, getState) => {
+  const state = getState();
+  const bill = state.bills.bills.find((bill) => bill.id === billId);
+
+  if (!bill) {
+    console.error("Bill not found in state.");
+    return;
+  }
+
+  console.log("THUNK BILLID", billId);
+  console.log("THUNK BILL", bill);
+
+  try {
+    const res = await csrfFetch(`/api/bills/${billId}`, {
+      method: "DELETE",
+    });
+
+    if (res.ok) {
+      dispatch(deleteBill(billId));
+    } else {
+      console.error("Failed to delete the bill. Status code:", res.status);
+      // You can dispatch an action to handle the error or show a user-friendly message here
+    }
+  } catch (error) {
+    console.error("An error occurred while deleting the bill:", error);
+    // Handle the error (e.g., dispatch an action to show an error message)
+  }
 };
 
 const initialState = { bills: null };
@@ -148,6 +232,13 @@ const billsReducer = (state = initialState, action) => {
       return {
         ...initialState,
       };
+    case DELETE_BILL:
+      const updatedBills = state.bills.filter((bill) => bill.id !== action.payload);
+      return {
+        ...state,
+        bills: updatedBills,
+      };
+
     default:
       return state;
   }

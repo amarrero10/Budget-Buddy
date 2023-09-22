@@ -43,8 +43,6 @@ router.put("/update-bill/:id", upload.none(), async (req, res) => {
     budgetId,
   } = req.body;
 
-  console.log("BACKEND", billName);
-
   const bill = await Bill.findByPk(id);
   bill.billName = billName;
   bill.paymentLink = paymentLink;
@@ -56,9 +54,54 @@ router.put("/update-bill/:id", upload.none(), async (req, res) => {
 
   await bill.save();
 
-  console.log("BACKEND BILL", bill);
-
   res.status(200).json(bill);
+});
+
+router.post("/", async (req, res) => {
+  const user = req.user;
+  const {
+    billName,
+    paymentLink,
+    billingDay,
+    billingStartMonth,
+    billingFrequency,
+    dueDate,
+    billAmount,
+    paid,
+    budgetId,
+  } = req.body;
+
+  const bill = await Bill.create({
+    userId: user.id,
+    billName,
+    paymentLink,
+    billingDay,
+    billingStartMonth,
+    billingFrequency,
+    dueDate,
+    billAmount,
+    paid,
+    budgetId,
+  });
+
+  return res.json({
+    bill: bill,
+  });
+});
+
+router.delete("/:id", async (req, res) => {
+  const id = req.params.id;
+  const bill = await Bill.findByPk(id);
+
+  console.log("BILL ROUTE", bill);
+
+  if (!bill) {
+    return res.status(404).json({ error: "Bill not found" });
+  }
+
+  await bill.destroy();
+
+  res.json({ message: "Successfully Deleted!" });
 });
 
 module.exports = router;

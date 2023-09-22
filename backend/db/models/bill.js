@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       billName: { type: DataTypes.STRING, allowNull: false },
       paymentLink: { type: DataTypes.STRING },
-      dueDate: { type: DataTypes.DATE, allowNull: false },
+      dueDate: { type: DataTypes.DATE },
       billingDay: {
         type: DataTypes.INTEGER,
         validate: {
