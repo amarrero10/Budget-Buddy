@@ -11,6 +11,8 @@ import Budget from "./components/Budget";
 import Settings from "./components/Settings";
 import Savings from "./components/Savings";
 import Landing from "./components/Landing";
+import Reminders from "./components/Reminders";
+import BudgetDetail from "./components/BudgetDetail";
 
 function App() {
   const dispatch = useDispatch();
@@ -39,15 +41,22 @@ function App() {
         <Route exact path="/bills">
           {sessionUser ? <Bills /> : <Redirect to="/" />}
         </Route>
-        <Route exact path="/budget">
+        <Route exact path="/budgets">
           {sessionUser ? <Budget /> : <Redirect to="/" />}
         </Route>
-        <Route exact path="/settings">
+        <Route exact path="/account">
           {sessionUser ? <Settings /> : <Redirect to="/" />}
         </Route>
         <Route exact path="/savings">
           {sessionUser ? <Savings /> : <Redirect to="/" />}
         </Route>
+        <Route exact path="/reminders">
+          {sessionUser ? <Reminders /> : <Redirect to="/" />}
+        </Route>
+        <Route exact path="/budgets/:id">
+          {sessionUser ? <BudgetDetail /> : <Redirect to="/" />}
+        </Route>
+
         <Redirect to="/" />
       </Switch>
     </>

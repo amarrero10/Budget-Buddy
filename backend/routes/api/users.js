@@ -75,6 +75,26 @@ router.get("/current/budgets", requireAuth, async (req, res) => {
       where: {
         userId: user.id,
       },
+      include: [
+        {
+          model: Bill,
+          attributes: [
+            "billAmount",
+            "billName",
+            "billingDay",
+            "billingFrequency",
+            "billingStartMonth",
+            "budgetId",
+            "createdAt",
+            "dueDate",
+            "id",
+            "paid",
+            "paymentLink",
+            "updatedAt",
+            "userId",
+          ],
+        },
+      ],
     });
 
     res.status(200).json({ Budgets: budgets });

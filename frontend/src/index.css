@@ -18,3 +18,11 @@ a {
 ul {
   list-style: none;
 }
+
+/* Remove number input spinners in webkit browsers */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0; /* Optional: You can adjust the margin to your liking */
+}

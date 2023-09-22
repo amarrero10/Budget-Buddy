@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import * as billsActions from "../store/bills";
 import Menu from "./Menu";
 import "./Bills.css";
-import { BsPencilSquare, BsTrash3 } from "react-icons/bs";
+import { BsLink, BsPencilSquare, BsTrash3 } from "react-icons/bs";
 
 function calculateDueDate(bill) {
   // Check if the bill has the required fields
@@ -298,6 +298,7 @@ function Bills() {
                   <th className="table-header">Due Date</th>
                   <th className="table-header">Edit</th>
                   <th className="table-header">Delete</th>
+                  <th className="table-header">Payment Link</th>
                 </tr>
               </thead>
               <tbody>
@@ -324,6 +325,11 @@ function Bills() {
                     </td>
                     <td className="delete">
                       <BsTrash3 onClick={() => handleDelete(bill.id)} className="bill-delete" />
+                    </td>
+                    <td className="edit">
+                      <a href={bill.paymentLink} target="_blank" rel="noreferrer">
+                        <BsLink className="bill-icon" />
+                      </a>
                     </td>
                   </tr>
                 ))}

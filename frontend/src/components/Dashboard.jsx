@@ -238,7 +238,7 @@ function Dashboard() {
               </Link>
             )}
             {budgets && budgets.length > 1 ? (
-              <Link to="/budget" className="dashboard-card">
+              <Link to="/budgets" className="dashboard-card">
                 <div className="dashboard-card-two">
                   <h2>Budgets</h2>
                   <GoGraph className="icon" />

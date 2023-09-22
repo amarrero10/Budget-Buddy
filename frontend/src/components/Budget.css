@@ -1,0 +1,38 @@
+.budget-page {
+  display: flex;
+  position: relative;
+}
+
+.welcome {
+  font-size: 3rem;
+  position: absolute;
+  top: -40px;
+}
+.budget-card {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  box-shadow: -1px 5px 29px 1px rgba(0, 0, 0, 0.28);
+  border-radius: 7px;
+}
+
+.create-budget-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 90px;
+}
+.create-budget-title {
+  text-align: center;
+}
+
+.budget-card-container {
+  display: flex;
+  flex-direction: row;
+
+  justify-content: space-between;
+}
+
+.budget-section {
+  width: 100%;
+  padding-right: 8px;
+}
