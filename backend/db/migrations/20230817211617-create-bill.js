@@ -46,6 +46,9 @@ module.exports = {
           type: Sequelize.BOOLEAN,
           defaultValue: false,
         },
+        datePaid: {
+          type: Sequelize.DATE,
+        },
         budgetId: {
           type: Sequelize.INTEGER,
         },

@@ -23,6 +23,7 @@ router.get("/:id", async (req, res) => {
           "dueDate",
           "id",
           "paid",
+          "datePaid",
           "paymentLink",
           "updatedAt",
           "userId",
@@ -32,6 +33,25 @@ router.get("/:id", async (req, res) => {
   });
 
   res.status(200).json({ budget });
+});
+
+// POST create a budget
+router.post("/", async (req, res) => {
+  const user = req.user;
+  const { budgetName, budgetAmount, budgetLeft, budgetDay, budgetStartMonth, budgetFrequency } =
+    req.body;
+
+  const budget = await Budget.create({
+    userId: user.id,
+    budgetName,
+    budgetAmount,
+    budgetLeft,
+    budgetDay,
+    budgetStartMonth,
+    budgetFrequency,
+  });
+
+  return res.json(budget);
 });
 
 module.exports = router;

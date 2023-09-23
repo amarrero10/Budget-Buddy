@@ -79,6 +79,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
+      datePaid: {
+        type: DataTypes.DATE,
+      },
       categoryId: { type: DataTypes.INTEGER },
     },
     {

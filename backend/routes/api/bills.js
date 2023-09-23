@@ -21,11 +21,12 @@ router.get("/:id", async (req, res) => {
 // PUT - mark bill as paid
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { paid } = req.body;
+  const { paid, datePaid } = req.body;
 
   const bill = await Bill.findByPk(id);
 
   bill.paid = paid;
+  bill.datePaid = datePaid;
   await bill.save();
 
   res.status(200).json(bill);
@@ -68,6 +69,7 @@ router.post("/", async (req, res) => {
     dueDate,
     billAmount,
     paid,
+    datePaid,
     budgetId,
   } = req.body;
 
@@ -81,6 +83,7 @@ router.post("/", async (req, res) => {
     dueDate,
     billAmount,
     paid,
+    datePaid,
     budgetId,
   });
 

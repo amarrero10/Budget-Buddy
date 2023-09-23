@@ -1,6 +1,7 @@
 .budget-page {
   display: flex;
   position: relative;
+  width: 100%;
 }
 
 .welcome {
@@ -18,21 +19,32 @@
 
 .create-budget-container {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   margin-top: 90px;
 }
 .create-budget-title {
   text-align: center;
 }
 
-.budget-card-container {
-  display: flex;
-  flex-direction: row;
-
-  justify-content: space-between;
-}
-
 .budget-section {
   width: 100%;
   padding-right: 8px;
+}
+
+.budget-card-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 50px;
+  margin: 0 auto;
+  justify-items: center; /* Center cards horizontally within each grid cell */
+  padding-bottom: 30px;
+}
+
+.existing {
+  font-size: 2rem;
+}
+
+.budgets-card {
+  box-shadow: -1px 5px 29px 1px rgba(0, 0, 0, 0.28);
+  border-radius: 7px;
 }

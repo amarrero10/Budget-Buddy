@@ -34,6 +34,21 @@ export const fetchBudget = (budgetId) => async (dispatch) => {
   dispatch(setBudget(data.budget));
 };
 
+export const createBudget = (formData) => async (dispatch) => {
+  const res = await csrfFetch("/api/budgets", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  const data = await res.json();
+
+  dispatch(setBudget(data));
+  dispatch(fetchBudgets());
+};
+
 const initialState = { budgets: null };
 
 const budgetsReducer = (state = initialState, action) => {

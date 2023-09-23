@@ -4,6 +4,20 @@ import * as billsActions from "../store/bills";
 import Menu from "./Menu";
 import "./Bills.css";
 import { BsLink, BsPencilSquare, BsTrash3 } from "react-icons/bs";
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 function calculateDueDate(bill) {
   // Check if the bill has the required fields
@@ -33,32 +47,40 @@ function calculateDueDate(bill) {
       // Calculate the next year's billing date
       const currentYear = currentDate.getFullYear();
       const currentMonth = currentDate.getMonth();
-      dueDate = new Date(currentYear + 1, currentMonth, billingDay);
+      dueDate = new Date(currentYear + 1, billingStartMonth - 1, billingDay);
 
       if (dueDate <= currentDate) {
         // Increment the due date by one year
         dueDate.setFullYear(dueDate.getFullYear() + 1);
       }
     } else if (billingFrequency === "quarterly" || billingFrequency === "every quarter") {
-      // Calculate quarterly billing date
+      // Calculate quarterly billing date based on billingStartMonth
       const currentMonth = currentDate.getMonth();
       const currentYear = currentDate.getFullYear();
       const currentDay = currentDate.getDate();
 
-      // Determine the billing quarter
-      const billingQuarter = Math.floor(currentMonth / 3 + 1);
+      // Convert billingStartMonth to a numerical value
+      const billingStartMonthIndex = months.indexOf(billingStartMonth);
 
-      // Calculate the next quarter's billing date
-      const nextQuarter = billingQuarter === 4 ? 1 : billingQuarter + 1;
+      if (billingStartMonthIndex !== -1) {
+        // Add 1 to the index to represent the month (1-based indexing)
+        const adjustedBillingMonth = billingStartMonthIndex + 1;
 
-      if (billingDay <= currentDay && billingQuarter) {
-        // Billing day is today or earlier in the current quarter, move to next quarter
-        dueDate.setMonth(nextQuarter * 3 - 1);
+        let nextYear = currentYear;
+
+        if (
+          (billingDay >= currentDay && adjustedBillingMonth >= currentMonth + 1) ||
+          (billingDay <= currentDay && adjustedBillingMonth >= currentMonth + 1)
+        ) {
+          dueDate = new Date(nextYear, adjustedBillingMonth + 2, billingDay);
+        } else {
+          // Billing day and month are in the past, calculate the due date for the same day and month next year
+          dueDate = new Date(nextYear + 1, adjustedBillingMonth - 1, billingDay);
+        }
       } else {
-        dueDate.setMonth(nextQuarter * 3 - 1);
+        // Handle the case when billingStartMonth is not found in the months array
+        return null;
       }
-
-      dueDate.setDate(billingDay);
     } else {
       return null; // Return null for unsupported frequencies
     }
@@ -87,8 +109,6 @@ function Bills() {
       ...prevFormData,
       isRecurring: value, // Update the isRecurring field in the formData
     }));
-
-    console.log(value); // Log the correct value
   };
 
   const bills = useSelector((state) => state.bills.bills);
@@ -184,10 +204,18 @@ function Bills() {
   const addHandleInput = (e) => {
     const { name, value } = e.target;
 
-    setAddFormData({
-      ...addFormData,
-      [name]: value,
-    });
+    if (name === "dueDate") {
+      setAddFormData({
+        ...addFormData,
+        [name]: value,
+        datePaid: value,
+      });
+    } else {
+      setAddFormData({
+        ...addFormData,
+        [name]: value,
+      });
+    }
   };
 
   useEffect(() => {
@@ -228,7 +256,9 @@ function Bills() {
   };
 
   const handleMarkAsPaid = (billId, newPaidStatus) => {
-    dispatch(billsActions.toggleBillPaidStatus(billId, newPaidStatus));
+    const datePaid = new Date(); // Create a new Date object with the current date
+
+    dispatch(billsActions.toggleBillPaidStatus(billId, newPaidStatus, datePaid));
   };
 
   useEffect(() => {}, [bills]);
@@ -248,34 +278,39 @@ function Bills() {
 
   recurringBills.sort((a, b) => calculateDueDate(a) - calculateDueDate(b));
 
-  oneTimeBills.sort((a, b) => {
-    const dateA = new Date(a.dueDate).getTime();
-    const dateB = new Date(b.dueDate).getTime();
-
-    return dateA - dateB;
-  });
-
   const numberDates = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
     27, 28, 29, 30, 31,
   ];
 
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
   const frequency = ["every month", "every quarter", "once a year"];
+
+  // Calculate the current month and year
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth() + 1; // Adding 1 to get 1-based indexing
+  const currentYear = currentDate.getFullYear();
+
+  // Calculate the first day of the current month
+  const firstDayOfMonth = `${currentYear}-${currentMonth.toString().padStart(2, "0")}-01`;
+
+  // Calculate the last day of the current month
+  const lastDayOfMonth = new Date(currentYear, currentMonth, 0).toISOString().split("T")[0];
+
+  // Filter the one-time bills array to get bills due in the current month
+  const oneTimeBillsForCurrentMonth = oneTimeBills.filter((bill) => {
+    const dueDate = new Date(bill.dueDate);
+    const dueMonth = dueDate.getMonth() + 1; // Adding 1 to get 1-based indexing
+    const dueYear = dueDate.getFullYear();
+
+    return dueMonth === currentMonth && dueYear === currentYear;
+  });
+
+  // Sort the bills by due date
+  oneTimeBillsForCurrentMonth.sort((a, b) => {
+    const dateA = new Date(a.dueDate);
+    const dateB = new Date(b.dueDate);
+    return dateA - dateB;
+  });
 
   return (
     <>
@@ -293,9 +328,10 @@ function Bills() {
               <thead>
                 <tr>
                   <th className="table-header">Paid</th>
+                  <th className="table-header">Date Paid</th>
                   <th className="table-header">Name</th>
                   <th className="table-header">Amount</th>
-                  <th className="table-header">Due Date</th>
+                  <th className="table-header">Next Due Date</th>
                   <th className="table-header">Edit</th>
                   <th className="table-header">Delete</th>
                   <th className="table-header">Payment Link</th>
@@ -314,6 +350,7 @@ function Bills() {
                         </button>
                       </div>
                     </td>
+                    <td>{bill.paid ? bill.datePaid : "-"}</td>
                     <td>{bill.billName}</td>
                     <td>{bill.billAmount}</td>
                     <td>
@@ -349,7 +386,7 @@ function Bills() {
                 </tr>
               </thead>
               <tbody>
-                {oneTimeBills?.map((bill) => (
+                {oneTimeBillsForCurrentMonth?.map((bill) => (
                   <tr key={bill.id}>
                     <td>{bill.billName}</td>
                     <td>{bill.billAmount}</td>
@@ -396,7 +433,7 @@ function Bills() {
                 ></input>
               </div>
               <div>
-                <p>Due Date:</p>
+                <p>Current Due Date:</p>
                 <div>
                   <label>Date:</label>
                   <select onChange={handleInput} name="billingDay" value={formData.billingDay}>
@@ -578,36 +615,20 @@ function Bills() {
                           ))}
                         </select>
                       </div>
-                      <div>
-                        <label>Month:</label>
-                        <select
-                          onChange={addHandleInput}
-                          name="billingStartMonth"
-                          value={addFormData.billingStartMonth}
-                        >
-                          <option>--</option>
-                          {months.map((month, idx) => (
-                            <option key={idx} value={month}>
-                              {month}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label>Frequency</label>
-                        <select
-                          onChange={addHandleInput}
-                          name="billingFrequency"
-                          value={addFormData.billingFrequency}
-                        >
-                          <option>--</option>
-                          {frequency.map((el, idx) => (
-                            <option key={idx} value={el}>
-                              {el}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                      <input
+                        type="hidden"
+                        name="billingDay"
+                        value={
+                          (addFormData.billingStartMonth = currentDate.toLocaleString("default", {
+                            month: "long",
+                          }))
+                        }
+                      />
+                      <input
+                        type="hidden"
+                        name="billingDay"
+                        value={(addFormData.billingFrequency = "every month")}
+                      />
                       <input type="hidden" name="paid" value={(addFormData.paid = false)} />
                     </>
                   ) : (
@@ -617,6 +638,8 @@ function Bills() {
                         type="date"
                         onChange={addHandleInput}
                         name="dueDate"
+                        min={firstDayOfMonth}
+                        max={lastDayOfMonth}
                         value={addFormData.dueDate}
                       ></input>
                       <input type="hidden" name="paid" value={(addFormData.paid = true)} />

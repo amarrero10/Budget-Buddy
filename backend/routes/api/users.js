@@ -89,6 +89,7 @@ router.get("/current/budgets", requireAuth, async (req, res) => {
             "dueDate",
             "id",
             "paid",
+            "datePaid",
             "paymentLink",
             "updatedAt",
             "userId",

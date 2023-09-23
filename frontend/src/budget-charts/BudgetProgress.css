@@ -1,0 +1,88 @@
+/* In your CSS file (e.g., styles.css) */
+.budget-progress-bars {
+  display: flex;
+  flex-direction: column;
+}
+
+.budget-progress-bar {
+  margin-bottom: 10px;
+  padding: 10px;
+
+  color: #032a3e; /* Default text color */
+  transition: background-color 0.3s;
+}
+
+.budget-name {
+  font-weight: bold;
+  color: #032a3e;
+}
+
+.budget-progress-container {
+  background-color: #e0e0e0;
+  height: 20px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+  position: relative;
+}
+
+.budget-progress {
+  background-color: #be3529;
+  height: 100%;
+}
+
+.percent {
+  text-align: left; /* Center the text */
+  font-weight: bold;
+  /* Use the primary color for the text */
+  margin-top: 5px; /* Add space between the progress bar and percentage */
+}
+
+.budget-details {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+}
+
+.budget-spent {
+  color: #be3529; /* Use the spent color */
+}
+
+.budget-remaining {
+  color: green; /* Use the remaining color */
+}
+
+.budget-btns {
+  margin-top: -10px;
+  margin-bottom: 20px;
+  margin-left: 10px;
+  padding-bottom: 20px;
+  width: 300px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.budget-edit,
+.budget-delete {
+  padding: 10px 35px;
+  background: none;
+  border: 1px solid #032a3e;
+  color: #032a3e;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.budget-edit:hover {
+  transition: background-color 0.3s;
+  transition: color 0.3s;
+  background-color: #be3529;
+  color: #fefefe;
+  border: 1px solid #be3529;
+}
+.budget-delete:hover {
+  transition: background-color 0.3s;
+  transition: color 0.3s;
+  background-color: #be3529;
+  color: #fefefe;
+  border: 1px solid #be3529;
+}

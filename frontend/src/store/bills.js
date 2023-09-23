@@ -1,3 +1,4 @@
+import { fetchBudgets } from "./budgets";
 import { csrfFetch } from "./csrf";
 
 const SET_BILLS = "bills/setBills";
@@ -54,29 +55,31 @@ export const fetchBill = (billId) => async (dispatch) => {
   console.log("BILL", data.bill);
 };
 
-export const toggleBillPaidStatus = (billId, newPaidStatus) => async (dispatch, getState) => {
-  const state = getState();
-  const bill = state.bills.bills.find((bill) => bill.id === billId);
+export const toggleBillPaidStatus =
+  (billId, newPaidStatus, datePaid) => async (dispatch, getState) => {
+    const state = getState();
+    const bill = state.bills.bills.find((bill) => bill.id === billId);
 
-  if (!bill) {
-    return;
-  }
+    if (!bill) {
+      return;
+    }
 
-  const res = await csrfFetch(`/api/bills/${billId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ paid: newPaidStatus }),
-  });
+    const res = await csrfFetch(`/api/bills/${billId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ paid: newPaidStatus, datePaid }),
+    });
 
-  if (!res.ok) {
-    throw new Error("Failed to update bill status");
-  }
+    if (!res.ok) {
+      throw new Error("Failed to update bill status");
+    }
 
-  dispatch(markBillAsPaid(billId, newPaidStatus));
-  dispatch(fetchBills());
-};
+    dispatch(markBillAsPaid(billId, newPaidStatus, datePaid));
+    dispatch(fetchBills());
+    dispatch(fetchBudgets());
+  };
 
 export const addBill = (formData) => async (dispatch) => {
   console.log("addBill form data", formData);
@@ -100,10 +103,12 @@ export const addBill = (formData) => async (dispatch) => {
         billingStartMonth: formData.billingStartMonth,
         billingFrequency: formData.billingFrequency,
         paid: false, // Set to false for recurring bills
+        dueDate: formData.dueDate,
       }
     : {
         ...commonData,
         dueDate: formData.dueDate,
+        datePaid: formData.datePaid,
         paid: true, // Set to true for one-time bills
       };
 
@@ -125,6 +130,7 @@ export const addBill = (formData) => async (dispatch) => {
 
   dispatch(setBill(data.id));
   dispatch(fetchBills());
+  dispatch(fetchBudgets());
 };
 
 export const editABill = (billId, formData) => async (dispatch, getState) => {
@@ -150,7 +156,8 @@ export const editABill = (billId, formData) => async (dispatch, getState) => {
   }
 
   dispatch(editBill(billId, formData));
-  // dispatch(fetchBills());
+  dispatch(fetchBills());
+  dispatch(fetchBudgets());
 };
 
 export const deleteABill = (billId) => async (dispatch, getState) => {
@@ -180,6 +187,8 @@ export const deleteABill = (billId) => async (dispatch, getState) => {
     console.error("An error occurred while deleting the bill:", error);
     // Handle the error (e.g., dispatch an action to show an error message)
   }
+  dispatch(fetchBills());
+  dispatch(fetchBudgets());
 };
 
 const initialState = { bills: null };
@@ -195,9 +204,12 @@ const billsReducer = (state = initialState, action) => {
       return {
         ...state,
         bills: state.bills.map((bill) =>
-          bill.id === action.payload.billId ? { ...bill, paid: action.payload.newPaidStatus } : bill
+          bill.id === action.payload.billId
+            ? { ...bill, paid: action.payload.newPaidStatus, datePaid: action.payload.datePaid }
+            : bill
         ),
       };
+
     case SET_BILL:
       return {
         ...state,
