@@ -216,20 +216,21 @@ function Budget() {
             </div>
           </div>
           <p className="existing">Existing Budgets:</p>
-
-          {budgets?.map((budget) => (
-            <div className="budgets-card">
-              <React.Fragment key={budget.id}>
-                <Link to={`/budgets/${budget.id}`} onClick={() => setSelectedBudgetId(budget.id)}>
-                  <BudgetProgressBars data={[budget]} />
-                </Link>
-                <div className="budget-btns">
-                  <button className="budget-edit">Edit</button>
-                  <button className="budget-delete">Delete</button>
-                </div>
-              </React.Fragment>
-            </div>
-          ))}
+          <div className="budgets-cards">
+            {budgets?.map((budget) => (
+              <div className="budgets-card">
+                <React.Fragment key={budget.id}>
+                  <Link to={`/budgets/${budget.id}`} onClick={() => setSelectedBudgetId(budget.id)}>
+                    <BudgetProgressBars data={[budget]} />
+                  </Link>
+                  <div className="budget-btns">
+                    <button className="budget-edit">Edit</button>
+                    <button className="budget-delete">Delete</button>
+                  </div>
+                </React.Fragment>
+              </div>
+            ))}
+          </div>
 
           {/* <Link to={`/budgets/${budget.id}`}>
               <BudgetProgressBars data={budgetData} />

@@ -48,3 +48,10 @@
   box-shadow: -1px 5px 29px 1px rgba(0, 0, 0, 0.28);
   border-radius: 7px;
 }
+
+.budgets-cards {
+  display: grid;
+  gap: 30px;
+  grid-template-columns: repeat(2, 1fr);
+  padding-right: 10px;
+}

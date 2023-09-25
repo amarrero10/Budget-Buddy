@@ -103,7 +103,6 @@ export const addBill = (formData) => async (dispatch) => {
         billingStartMonth: formData.billingStartMonth,
         billingFrequency: formData.billingFrequency,
         paid: false, // Set to false for recurring bills
-        dueDate: formData.dueDate,
       }
     : {
         ...commonData,

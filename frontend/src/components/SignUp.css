@@ -1,0 +1,93 @@
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fefefe;
+  height: 100vh;
+  margin-bottom: 50px;
+}
+
+.signup-form {
+  box-shadow: -1px 5px 29px 1px rgba(0, 0, 0, 0.28);
+  border-radius: 7px;
+  width: 50%;
+  margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.input-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.input-section > label {
+  font-size: 1.1rem;
+  margin-top: 10px;
+}
+
+.signup-icon {
+  position: absolute;
+  right: 360px;
+  font-size: 1.5rem;
+}
+
+.input {
+  padding: 10px 0px;
+  font-size: 1.2rem;
+  width: 350px;
+  padding-left: 35px;
+  border-radius: 7px;
+}
+
+.signup-btn {
+  padding: 10px 35px;
+  background: none;
+  border: 1px solid #032a3e;
+  color: #032a3e;
+  font-size: 1.1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.signup-btn:hover {
+  transition: background-color 0.3s;
+  transition: color 0.3s;
+  background-color: #be3529;
+  color: #fefefe;
+  border: 1px solid #be3529;
+}
+
+.signup-title {
+  color: #032a3e;
+  text-align: center;
+}
+
+.signup-link {
+  color: #032a3e;
+  text-decoration: underline;
+}
+
+.error-text {
+  color: #ff0000; /* Set the color for error text to red */
+  font-size: 0.9rem; /* Adjust the font size as needed */
+  margin-top: 3px; /* Add some space between the input and the error message */
+}
+
+.login-btns {
+  display: flex;
+  justify-content: space-between;
+  width: 320px;
+  margin-right: 10px;
+}

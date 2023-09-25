@@ -433,7 +433,7 @@ function Bills() {
                 ></input>
               </div>
               <div>
-                <p>Current Due Date:</p>
+                <p>Change Date It Falls On:</p>
                 <div>
                   <label>Date:</label>
                   <select onChange={handleInput} name="billingDay" value={formData.billingDay}>
@@ -443,37 +443,21 @@ function Bills() {
                     ))}
                   </select>
                 </div>
-                <div>
-                  <label>Month:</label>
-                  <select
-                    onChange={handleInput}
-                    name="billingStartMonth"
-                    value={formData.billingStartMonth}
-                  >
-                    <option>--</option>
-                    {months.map((month, idx) => (
-                      <option key={idx} value={month}>
-                        {month}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label>Frequency</label>
-                  <select
-                    onChange={handleInput}
-                    name="billingFrequency"
-                    value={formData.billingFrequency}
-                  >
-                    <option>--</option>
-                    {frequency.map((el, idx) => (
-                      <option key={idx} value={el}>
-                        {el}
-                      </option>
-                    ))}
-                  </select>
-                </div>
               </div>
+              <input
+                type="hidden"
+                name="billingDay"
+                value={
+                  (formData.billingStartMonth = currentDate.toLocaleString("default", {
+                    month: "long",
+                  }))
+                }
+              />
+              <input
+                type="hidden"
+                name="billingDay"
+                value={(formData.billingFrequency = "every month")}
+              />
               <div>
                 <label htmlFor="billAMount">Amount</label>
                 <input

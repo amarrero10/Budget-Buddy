@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link, Redirect, useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { FaCheck } from "react-icons/fa";
+import { FaLock, FaPortrait, FaRegEnvelope, FaUserCircle } from "react-icons/fa";
 import * as sessionActions from "../store/session";
 import { useDispatch, useSelector } from "react-redux";
 import logo from "../assets/logo.png";
 import { motion } from "framer-motion";
+import "./SignUp.css";
 
 function SignUpPage() {
   const history = useHistory();
@@ -15,11 +16,53 @@ function SignUpPage() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
 
   if (sessionUser) return <Redirect to="/dashboard" />;
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!firstName) {
+      newErrors.firstName = "First Name is required";
+    } else if (firstName.length < 3) {
+      newErrors.firstName = "First Name must be at least 4 characters";
+    }
+
+    if (!lastName) {
+      newErrors.lastName = "Last Name is required";
+    } else if (lastName.length < 3) {
+      newErrors.lastName = "First Name must be at least 4 characters";
+    }
+
+    if (!username) {
+      newErrors.username = "Username is required";
+    } else if (username.length < 4) {
+      newErrors.username = "Username must be at least 4 characters";
+    }
+
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
 
   const signup = async (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
+
     try {
       await dispatch(
         sessionActions.signup({
@@ -42,11 +85,13 @@ function SignUpPage() {
 
   return (
     <>
-      <div>
-        <div>
-          <form onSubmit={signup}>
-            <div>
-              <label htmlFor="firstName">First Name</label>
+      <div className="form-container">
+        <form onSubmit={signup} className="signup-form">
+          <h2 className="signup-title">Welcome to Budget Buddy, your personal finance tool!</h2>
+          <div className="input-section">
+            <label htmlFor="firstName">First Name:</label>
+            <div className="input-icon">
+              <FaPortrait className="signup-icon" />
               <input
                 id="firstName"
                 name="firstName"
@@ -55,11 +100,17 @@ function SignUpPage() {
                 placeholder="John"
                 required
                 type="text"
+                className="input"
               ></input>
             </div>
-            <div>
-              <label htmlFor="lastName">Last Name</label>
+            {errors.firstName && <p className="error-text">{errors.firstName}</p>}
+          </div>
+          <div className="input-section">
+            <label htmlFor="lastName">Last Name:</label>
+            <div className="input-icon">
+              <FaPortrait className="signup-icon" />
               <input
+                className="input"
                 id="lastName"
                 name="lastName"
                 value={lastName}
@@ -69,9 +120,14 @@ function SignUpPage() {
                 type="text"
               ></input>
             </div>
-            <div>
-              <label htmlFor="username">User Name</label>
+            {errors.lastName && <p className="error-text">{errors.lastName}</p>}
+          </div>
+          <div className="input-section">
+            <label htmlFor="username">User Name:</label>
+            <div className="input-icon">
+              <FaUserCircle className="signup-icon" />
               <input
+                className="input"
                 id="username"
                 name="username"
                 value={username}
@@ -81,9 +137,14 @@ function SignUpPage() {
                 type="text"
               ></input>
             </div>
-            <div className="flex flex-col">
-              <label htmlFor="email">Email</label>
+            {errors.username && <p className="error-text">{errors.username}</p>}
+          </div>
+          <div className="input-section">
+            <label htmlFor="email">Email:</label>
+            <div className="input-icon">
+              <FaRegEnvelope className="signup-icon" />
               <input
+                className="input"
                 id="email"
                 name="email"
                 value={email}
@@ -93,11 +154,16 @@ function SignUpPage() {
                 type="email"
               ></input>
             </div>
-            <div>
-              <label htmlFor="password" className="text-xl">
-                Password
-              </label>
+            {errors.email && <p className="error-text">{errors.email}</p>}
+          </div>
+          <div className="input-section">
+            <label htmlFor="password" className="text-xl">
+              Password:
+            </label>
+            <div className="input-icon">
+              <FaLock className="signup-icon" />
               <input
+                className="input"
                 id="password"
                 name="password"
                 value={password}
@@ -107,16 +173,25 @@ function SignUpPage() {
                 type="password"
               ></input>
             </div>
-            <motion.button whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.05 }} type="submit">
-              Sign Up!
-            </motion.button>
+            {errors.password && <p className="error-text">{errors.password}</p>}
+          </div>
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.05 }}
+            type="submit"
+            className="signup-btn"
+          >
+            Sign Up!
+          </motion.button>
 
-            <p>
-              Already Have an account? Log in
-              <Link to="/login">Here</Link>!
-            </p>
-          </form>
-        </div>
+          <p>
+            Already Have an account? Log in{" "}
+            <Link to="/login" className="signup-link">
+              Here
+            </Link>
+            !
+          </p>
+        </form>
       </div>
     </>
   );
