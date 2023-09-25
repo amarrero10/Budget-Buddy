@@ -2,6 +2,7 @@
   display: flex;
   position: relative;
   width: 100%;
+  margin-bottom: 30px;
 }
 
 .welcome {
@@ -15,6 +16,10 @@
   width: 400px;
   box-shadow: -1px 5px 29px 1px rgba(0, 0, 0, 0.28);
   border-radius: 7px;
+  padding-left: 5px;
+  padding-right: 5px;
+  height: 270px;
+  margin-top: 90px;
 }
 
 .create-budget-container {
@@ -54,4 +59,13 @@
   gap: 30px;
   grid-template-columns: repeat(2, 1fr);
   padding-right: 10px;
+}
+
+.reset-when {
+  margin-bottom: -10px;
+}
+
+.create-btn {
+  margin-top: 10px;
+  margin-left: 140px;
 }

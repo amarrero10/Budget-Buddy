@@ -127,7 +127,7 @@ export const addBill = (formData) => async (dispatch) => {
 
   const data = await res.json();
 
-  dispatch(setBill(data.id));
+  dispatch(setBill(data));
   dispatch(fetchBills());
   dispatch(fetchBudgets());
 };

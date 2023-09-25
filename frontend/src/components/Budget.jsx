@@ -135,7 +135,7 @@ function Budget() {
               <div className="budget-card">
                 <h2 className="create-budget-title">Create Budget</h2>
                 <form onSubmit={handleSubmit}>
-                  <div>
+                  <div className="input-section">
                     <label htmlFor="budget-name">Budget Name:</label>
                     <input
                       id="budget-name"
@@ -146,7 +146,7 @@ function Budget() {
                       onChange={handleCreateBudgetInput}
                     ></input>
                   </div>
-                  <div>
+                  <div className="input-section">
                     <label htmlFor="budget-amount">What is your total budget?</label>
                     <input
                       id="budget-amount"
@@ -157,56 +157,10 @@ function Budget() {
                       onChange={handleCreateBudgetInput}
                     ></input>
                   </div>
-                  <p>When do you want this to reset?</p>
-                  <div>
-                    <label htmlFor="budget-date">Budget Date Number:</label>
-                    <select
-                      id="budget-date"
-                      type="number"
-                      placeholder="2500"
-                      name="budgetDay"
-                      value={formData.budgetDay}
-                      onChange={handleCreateBudgetInput}
-                    >
-                      <option>--</option>
-                      {numberDates.map((number, idx) => (
-                        <option key={idx}>{number}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label htmlFor="budget-month">Budget Start Month:</label>
-                    <select
-                      id="budget-month"
-                      type="number"
-                      placeholder="2500"
-                      name="budgetStartMonth"
-                      value={formData.budgetStartMonth}
-                      onChange={handleCreateBudgetInput}
-                    >
-                      <option>--</option>
-                      {months.map((month, idx) => (
-                        <option key={idx}>{month}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label htmlFor="budget-frequency">Frequency:</label>
-                    <select
-                      id="budget-frequency"
-                      type="number"
-                      placeholder="2500"
-                      name="budgetFrequency"
-                      value={formData.budgetFrequency}
-                      onChange={handleCreateBudgetInput}
-                    >
-                      <option>--</option>
-                      {frequency.map((often, idx) => (
-                        <option key={idx}>{often}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <button type="submit">Submit</button>
+
+                  <button type="submit" className="nav-btn create-btn">
+                    Submit
+                  </button>
                 </form>
               </div>
               <div className="budget-donut">

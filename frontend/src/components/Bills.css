@@ -4,7 +4,8 @@
 
 .bill-tables {
   display: flex;
-  justify-content: space-around;
+  flex-direction: column;
+  padding-right: 10px;
   width: 100%;
 }
 
@@ -77,8 +78,69 @@
 }
 
 .bill-btn {
-  position: absolute;
-  top: 10%;
-  left: 19%;
-  transform: translate(-10%, -19%);
+  margin-top: 20px;
+  width: 150px;
+}
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background overlay */
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure the modal appears above other elements */
+}
+
+.modal-content {
+  background-color: #fefefe; /* Background color for the modal content */
+  box-shadow: -1px 5px 29px 1px rgba(0, 0, 0, 0.28);
+  border-radius: 7px;
+  padding: 20px;
+  max-width: 500px; /* Adjust the width as needed */
+}
+
+/* Form Styles */
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #032a3e; /* Text color */
+}
+
+.modal-content input,
+.modal-content select {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #032a3e; /* Input border color */
+  border-radius: 5px;
+}
+
+/* Button Styles */
+.modal-content button {
+  padding: 10px 20px;
+  background-color: #be3529; /* Button background color */
+  color: #fefefe; /* Button text color */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.modal-content button:hover {
+  background-color: #032a3e; /* Button background color on hover */
+}
+
+input[type="date"] {
+  font-family: inherit; /* Inherit font family from parent */
+  /* Add other styling as needed */
 }

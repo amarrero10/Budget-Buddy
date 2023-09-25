@@ -218,6 +218,8 @@ function Bills() {
     }
   };
 
+  console.log(addFormData.dueDate);
+
   useEffect(() => {
     if (selectedBill) {
       dispatch(billsActions.fetchBill(selectedBill));
@@ -287,6 +289,7 @@ function Bills() {
 
   // Calculate the current month and year
   const currentDate = new Date();
+
   const currentMonth = currentDate.getMonth() + 1; // Adding 1 to get 1-based indexing
   const currentYear = currentDate.getFullYear();
 
@@ -294,29 +297,44 @@ function Bills() {
   const firstDayOfMonth = `${currentYear}-${currentMonth.toString().padStart(2, "0")}-01`;
 
   // Calculate the last day of the current month
-  const lastDayOfMonth = new Date(currentYear, currentMonth, 0).toISOString().split("T")[0];
+  let currentPaidDate = new Date();
+
+  currentPaidDate.setHours(currentPaidDate.getHours());
+  const lastDayOfMonth = currentPaidDate.toISOString().split("T")[0];
+
+  console.log(new Date().toISOString());
 
   // Filter the one-time bills array to get bills due in the current month
   const oneTimeBillsForCurrentMonth = oneTimeBills.filter((bill) => {
-    const dueDate = new Date(bill.dueDate);
-    const dueMonth = dueDate.getMonth() + 1; // Adding 1 to get 1-based indexing
-    const dueYear = dueDate.getFullYear();
+    const datePaid = new Date(bill.datePaid);
+    let dueMonth = datePaid.getMonth(); // Get the current month
+
+    // Check if it's the 1st of the month
+    if (bill.datePaid.includes("01T")) {
+      dueMonth += 2;
+    } else {
+      dueMonth += 1;
+    }
+
+    const dueYear = datePaid.getFullYear();
+
+    // Format the date using toLocaleDateString()
+    const formattedDate = datePaid.toLocaleDateString();
+
+    // Now you can use `formattedDate` in your code as needed
 
     return dueMonth === currentMonth && dueYear === currentYear;
   });
 
   // Sort the bills by due date
   oneTimeBillsForCurrentMonth.sort((a, b) => {
-    const dateA = new Date(a.dueDate);
-    const dateB = new Date(b.dueDate);
+    const dateA = new Date(a.datePaid);
+    const dateB = new Date(b.datePaid);
     return dateA - dateB;
   });
 
   return (
     <>
-      <button className="nav-btn bill-btn" onClick={openAddModal}>
-        Add A Bill
-      </button>
       <div className="bills-page">
         <div>
           <Menu />
@@ -386,25 +404,30 @@ function Bills() {
                 </tr>
               </thead>
               <tbody>
-                {oneTimeBillsForCurrentMonth?.map((bill) => (
-                  <tr key={bill.id}>
-                    <td>{bill.billName}</td>
-                    <td>{bill.billAmount}</td>
-                    <td>{bill?.dueDate}</td>
-                    <td className="edit">
-                      <BsPencilSquare
-                        onClick={() => handleOneTimeEdit(bill.id)}
-                        className="bill-icon"
-                      />
-                    </td>
-                    <td className="delete">
-                      <BsTrash3 onClick={() => handleDelete(bill.id)} className="bill-delete" />
-                    </td>
-                  </tr>
-                ))}
+                {oneTimeBillsForCurrentMonth?.map((bill) => {
+                  return (
+                    <tr key={bill.id}>
+                      <td>{bill.billName}</td>
+                      <td>{bill.billAmount}</td>
+                      <td>{bill?.datePaid.slice(0, 10)}</td> {/* Display formattedDate */}
+                      <td className="edit">
+                        <BsPencilSquare
+                          onClick={() => handleOneTimeEdit(bill.id)}
+                          className="bill-icon"
+                        />
+                      </td>
+                      <td className="delete">
+                        <BsTrash3 onClick={() => handleDelete(bill.id)} className="bill-delete" />
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
+          <button className="nav-btn bill-btn" onClick={openAddModal}>
+            Add A Bill
+          </button>
         </div>
       </div>
 
@@ -481,8 +504,8 @@ function Bills() {
                 </select>
               </div>
               <button type="submit">Save Changes</button>
+              <button onClick={() => setEditOpenModal(false)}>Cancel</button>
             </form>
-            <button onClick={() => setEditOpenModal(false)}>Cancel</button>
           </div>
         </div>
       )}
@@ -530,8 +553,8 @@ function Bills() {
                 </select>
               </div>
               <button type="submit">Save Changes</button>
+              <button onClick={() => setEditOneTimeBillModal(false)}>Cancel</button>
             </form>
-            <button onClick={() => setEditOpenModal(false)}>Cancel</button>
           </div>
         </div>
       )}
@@ -652,9 +675,9 @@ function Bills() {
                     ))}
                   </select>
                 </div>
-                <button type="submit">Save Changes</button>
+                <button type="submit">Add Bill</button>
+                <button onClick={() => setAddOpenModal(false)}>Cancel</button>
               </form>
-              <button onClick={() => setAddOpenModal(false)}>Cancel</button>
             </div>
           </div>
         </>
