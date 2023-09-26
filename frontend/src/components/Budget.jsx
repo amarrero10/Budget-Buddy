@@ -14,13 +14,17 @@ function Budget() {
   const budgets = useSelector((state) => state.budgets.budgets);
   const user = useSelector((state) => state.session.user.user);
   const bills = useSelector((state) => state.bills.bills);
+  const [editBudgetModal, setEditBudgetModal] = useState(false);
+  const [deleteBudgetModal, setDeleteBudgetModal] = useState(false);
   const [budgetTotals, setBudgetTotals] = useState({});
+  const [currentBudgetId, setCurrentBudgetId] = useState(null);
   const [formData, setFormData] = useState({
     budgetName: "",
     budgetAmount: "",
-    budgetDay: "",
-    budgetStartMonth: "",
-    budgetFrequency: "",
+  });
+  const [editFormData, setEditFormData] = useState({
+    budgetName: "",
+    budgetAmount: "",
   });
   const [selectedBudgetId, setSelectedBudgetId] = useState(null);
 
@@ -39,6 +43,25 @@ function Budget() {
         [name]: value,
       });
     }
+  };
+
+  const handleEditBudgetInput = (e) => {
+    const { name, value } = e.target;
+
+    // Calculate budgetLeft based on the initial value of editFormData if budgetAmount is not changed
+    const newEditFormData = {
+      ...editFormData,
+      [name]: value,
+    };
+
+    if (name === "budgetAmount") {
+      newEditFormData.budgetLeft = value;
+    } else {
+      // Calculate budgetLeft based on the initial budgetAmount value
+      newEditFormData.budgetLeft = editFormData.budgetAmount;
+    }
+
+    setEditFormData(newEditFormData);
   };
 
   useEffect(() => {
@@ -79,28 +102,6 @@ function Budget() {
     dispatch(budgetActions.createBudget(formData));
   };
 
-  const numberDates = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
-    27, 28, 29, 30, 31,
-  ];
-
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  const frequency = ["every month", "every quarter", "once a year"];
-
   let totalBudget = 0;
 
   for (let i = 0; i < budgets.length; i++) {
@@ -121,6 +122,42 @@ function Budget() {
       remainingAmount,
     };
   });
+  const handleEditBudgetModal = (budget) => {
+    setEditFormData({
+      budgetName: budget.budgetName,
+      budgetAmount: budget.budgetAmount,
+    });
+    setEditBudgetModal(true);
+  };
+
+  const handleDeleteBudgetModal = () => {
+    setDeleteBudgetModal(true);
+  };
+
+  const handleEditBudgetSubmit = (e) => {
+    e.preventDefault();
+
+    // Calculate budgetLeft based on the initial budgetAmount value
+    const updatedEditFormData = {
+      ...editFormData,
+      budgetLeft: editFormData.budgetAmount,
+    };
+
+    dispatch(budgetActions.editABudget(currentBudgetId, updatedEditFormData));
+    setEditFormData({
+      budgetName: "",
+      budgetAmount: "",
+      budgetLeft: "", // Reset budgetLeft
+    });
+    setEditBudgetModal(false);
+  };
+
+  const handleDeleteBudget = (currentBudgetId) => {
+    dispatch(budgetActions.deleteABudget(currentBudgetId));
+    setDeleteBudgetModal(false);
+  };
+
+  console.log("NEW BUDGETS", budgets);
 
   return (
     <>
@@ -178,47 +215,101 @@ function Budget() {
                     <BudgetProgressBars data={[budget]} />
                   </Link>
                   <div className="budget-btns">
-                    <button className="budget-edit">Edit</button>
-                    <button className="budget-delete">Delete</button>
+                    <button
+                      className="budget-edit"
+                      onClick={() => {
+                        setCurrentBudgetId(budget.id);
+                        handleEditBudgetModal(budget);
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="budget-delete"
+                      onClick={() => {
+                        setCurrentBudgetId(budget.id);
+                        handleDeleteBudgetModal();
+                      }}
+                    >
+                      Delete
+                    </button>
                   </div>
                 </React.Fragment>
               </div>
             ))}
           </div>
-
-          {/* <Link to={`/budgets/${budget.id}`}>
-              <BudgetProgressBars data={budgetData} />
-            </Link> */}
         </div>
       </div>
+      {editBudgetModal && (
+        <>
+          <div className="modal">
+            <div className="modal-content">
+              <form onSubmit={handleEditBudgetSubmit}>
+                <div>
+                  <input type="hidden" name="budgetId" value={currentBudgetId} />
+                  <label htmlFor="change-name">Change Name:</label>
+                  <input
+                    id="change-name"
+                    name="budgetName"
+                    value={editFormData.budgetName}
+                    type="text"
+                    onChange={handleEditBudgetInput}
+                  ></input>
+                </div>
+                <div>
+                  <label htmlFor="change-amount">Change Amount:</label>
+                  <input
+                    id="change-amount"
+                    name="budgetAmount"
+                    value={editFormData.budgetAmount}
+                    type="number"
+                    onChange={handleEditBudgetInput}
+                  ></input>
+                </div>
+                <button
+                  onClick={(e) => {
+                    setEditBudgetModal(false);
+                    e.preventDefault();
+                  }}
+                >
+                  Cancel
+                </button>
+                <button type="submit">Save Changes</button>
+              </form>
+            </div>
+          </div>
+        </>
+      )}
+      {deleteBudgetModal && (
+        <>
+          <div className="modal">
+            <div className="modal-content">
+              <form>
+                <input type="hidden" name="budgetId" value={currentBudgetId} />
+                <button
+                  onClick={(e) => {
+                    setDeleteBudgetModal(false);
+                    e.preventDefault();
+                    console.log("ID", currentBudgetId);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    setDeleteBudgetModal(false);
+                    handleDeleteBudget(currentBudgetId); // Pass the callback function
+                  }}
+                >
+                  Yes, Delete
+                </button>
+              </form>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }
-
-// {
-//   /* <div className="budget-card-container">
-//   {budgets?.map((budget, idx) => (
-//     <Link to={`/budgets/${budget.id}`} key={idx}>
-//       <div className="budget-card">
-//         <div>
-//           <h2>{budget.budgetName}</h2>
-//           <p>{budget.budgetAmount} budgeted</p>
-//         </div>
-//         <div>
-//           <p>Progress Bar goes here</p>
-//         </div>
-//         <div>
-//           <p>Money Spent: {budgetTotals[budget.id]}</p>
-//           <p>{budget.budgetLeft - budgetTotals[budget.id]} remaining</p>
-//         </div>
-//         <div className="budget-card-btns">
-//           <button>Edit</button>
-//           <button>Delete</button>
-//         </div>
-//       </div>
-//     </Link>
-//   ))}
-// </div> */
-// }
 
 export default Budget;

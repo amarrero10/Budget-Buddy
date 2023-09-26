@@ -74,6 +74,7 @@ module.exports = {
           paid: true,
           budgetId: 1,
           dueDate: new Date("2023-09-12T12:00:00Z"),
+          datePaid: new Date("2023-09-12T12:00:00Z"),
         },
         {
           userId: 1,
@@ -82,6 +83,7 @@ module.exports = {
           paid: true,
           budgetId: 3,
           dueDate: new Date("2023-09-18T12:00:00Z"),
+          datePaid: new Date("2023-09-18T12:00:00Z"),
         },
         {
           userId: 1,
@@ -90,6 +92,7 @@ module.exports = {
           paid: true,
           budgetId: 3,
           dueDate: new Date("2023-09-15T12:00:00Z"),
+          datePaid: new Date("2023-09-15T12:00:00Z"),
         },
       ],
       {}

@@ -111,8 +111,6 @@ export const addBill = (formData) => async (dispatch) => {
         paid: true, // Set to true for one-time bills
       };
 
-  console.log("FINAL FORM ", finalFormData);
-
   const res = await csrfFetch(`/api/bills/`, {
     method: "POST",
     headers: {
@@ -167,9 +165,6 @@ export const deleteABill = (billId) => async (dispatch, getState) => {
     console.error("Bill not found in state.");
     return;
   }
-
-  console.log("THUNK BILLID", billId);
-  console.log("THUNK BILL", bill);
 
   try {
     const res = await csrfFetch(`/api/bills/${billId}`, {

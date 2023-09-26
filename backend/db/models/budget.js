@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Budget.hasMany(models.Bill, {
         foreignKey: "budgetId",
+        onDelete: "CASCADE",
       });
       Budget.belongsTo(models.User, {
         foreignKey: "userId",

@@ -310,7 +310,7 @@ function Bills() {
     let dueMonth = datePaid.getMonth(); // Get the current month
 
     // Check if it's the 1st of the month
-    if (bill.datePaid.includes("01T")) {
+    if (bill?.datePaid?.includes("01T")) {
       dueMonth += 2;
     } else {
       dueMonth += 1;
@@ -409,7 +409,7 @@ function Bills() {
                     <tr key={bill.id}>
                       <td>{bill.billName}</td>
                       <td>{bill.billAmount}</td>
-                      <td>{bill?.datePaid.slice(0, 10)}</td> {/* Display formattedDate */}
+                      <td>{bill?.datePaid.slice(0, 10)}</td>
                       <td className="edit">
                         <BsPencilSquare
                           onClick={() => handleOneTimeEdit(bill.id)}

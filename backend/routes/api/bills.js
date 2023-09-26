@@ -96,8 +96,6 @@ router.delete("/:id", async (req, res) => {
   const id = req.params.id;
   const bill = await Bill.findByPk(id);
 
-  console.log("BILL ROUTE", bill);
-
   if (!bill) {
     return res.status(404).json({ error: "Bill not found" });
   }

@@ -133,7 +133,7 @@ function Dashboard() {
       name: bill.billName,
       amount: bill.billAmount,
       paid: bill.paid,
-      budget: bill.Budget.budgetName,
+      budget: bill?.Budget?.budgetName,
       date: calculateDueDate(bill),
       dueDate: dueDate ? dueDate.toLocaleDateString() : null,
     });

@@ -51,6 +51,12 @@ module.exports = {
         },
         budgetId: {
           type: Sequelize.INTEGER,
+          allowNull: false,
+          references: {
+            model: "Budgets", // Name of the referenced table
+            key: "id", // Name of the referenced column
+          },
+          onDelete: "CASCADE",
         },
         categoryId: {
           type: Sequelize.INTEGER,
