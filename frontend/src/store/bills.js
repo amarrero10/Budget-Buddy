@@ -82,11 +82,7 @@ export const toggleBillPaidStatus =
   };
 
 export const addBill = (formData) => async (dispatch) => {
-  console.log("addBill form data", formData);
-  // Check if the bill is recurring
   const isRecurring = formData.isRecurring === true;
-
-  console.log("IS RECUR", isRecurring);
 
   // Create a formData object with the common fields
   const commonData = {
@@ -130,6 +126,52 @@ export const addBill = (formData) => async (dispatch) => {
   dispatch(fetchBudgets());
 };
 
+export const addBillBudget = (formData) => async (dispatch) => {
+  const isRecurring = formData.isRecurring === true;
+
+  // Create a formData object with the common fields
+  const commonData = {
+    billName: formData.billName,
+    paymentLink: formData.paymentLink,
+    billAmount: formData.billAmount,
+    budgetId: formData.budgetId,
+  };
+
+  const finalFormData = isRecurring
+    ? {
+        ...commonData,
+        billingDay: formData.billingDay,
+        billingStartMonth: formData.billingStartMonth,
+        billingFrequency: formData.billingFrequency,
+        datePaid: formData.datePaid,
+        paid: true,
+      }
+    : {
+        ...commonData,
+        dueDate: formData.dueDate,
+        datePaid: formData.datePaid,
+        paid: true, // Set to true for one-time bills
+      };
+
+  const res = await csrfFetch(`/api/bills/budget`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(finalFormData),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to add a new bill");
+  }
+
+  const data = await res.json();
+
+  dispatch(setBill(data));
+  dispatch(fetchBills());
+  dispatch(fetchBudgets());
+};
+
 export const editABill = (billId, formData) => async (dispatch, getState) => {
   const state = getState();
   const bill = state.bills.bills.find((bill) => bill.id === billId);
@@ -138,7 +180,7 @@ export const editABill = (billId, formData) => async (dispatch, getState) => {
     return;
   }
 
-  const res = await csrfFetch(`/api/bills/update-bill/${billId}`, {
+  const res = await csrfFetch(`/api/bills/update/bill/${billId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

@@ -144,3 +144,15 @@ input[type="date"] {
   font-family: inherit; /* Inherit font family from parent */
   /* Add other styling as needed */
 }
+
+.bills-btns {
+  width: 400px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.reset-btns {
+  width: 300px;
+  display: flex;
+  justify-content: space-around;
+}

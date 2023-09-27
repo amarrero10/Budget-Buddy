@@ -97,6 +97,7 @@ function Bills() {
   const [editOpenModal, setEditOpenModal] = useState(false);
   const [editOneTimeBillModal, setEditOneTimeBillModal] = useState(false);
   const [addOpenModal, setAddOpenModal] = useState(false);
+  const [resetModal, setResetModal] = useState(false);
   const [selectedBill, setSelectedBill] = useState(null);
   const [isRecurring, setIsRecurring] = useState(null);
 
@@ -159,6 +160,10 @@ function Bills() {
     setAddOpenModal(true);
   };
 
+  const openResetModal = () => {
+    setResetModal(true);
+  };
+
   const handleEditSubmit = (e) => {
     e.preventDefault();
 
@@ -181,7 +186,16 @@ function Bills() {
     const updatedFormData = { ...addFormData, isRecurring: isRecurring };
 
     dispatch(billsActions.addBill(updatedFormData));
-    console.log("ADD BILL", addFormData);
+  };
+
+  const handleResetBills = (e) => {
+    console.log("Resetting all bills to unpaid");
+    e.preventDefault();
+    recurringBills.forEach((bill) => {
+      handleMarkAsPaid(bill.id, false);
+    });
+
+    setResetModal(false);
   };
 
   const handleInput = (e) => {
@@ -217,8 +231,6 @@ function Bills() {
       });
     }
   };
-
-  console.log(addFormData.dueDate);
 
   useEffect(() => {
     if (selectedBill) {
@@ -266,7 +278,7 @@ function Bills() {
   useEffect(() => {}, [bills]);
 
   // GET ONLY RECURRING BILLS
-  let recurringBills = bills?.filter((bill) => bill.dueDate === null);
+  let recurringBills = bills?.filter((bill) => bill.billingMonth !== null);
 
   let oneTimeBills = bills?.filter((bill) => bill.dueDate !== null);
 
@@ -341,7 +353,7 @@ function Bills() {
         </div>
         <div className="bill-tables">
           <div>
-            <p>Recurring Bills:</p>
+            <p>Monthly Recurring Bills:</p>
             <table className="custom-table">
               <thead>
                 <tr>
@@ -392,7 +404,7 @@ function Bills() {
             </table>
           </div>
           <div>
-            <p>Non-Recurring Bills:</p>
+            <p>Non-Recurring Bills For The Month:</p>
             <table className="custom-table">
               <thead>
                 <tr>
@@ -425,9 +437,14 @@ function Bills() {
               </tbody>
             </table>
           </div>
-          <button className="nav-btn bill-btn" onClick={openAddModal}>
-            Add A Bill
-          </button>
+          <div className="bills-btns">
+            <button className="nav-btn bill-btn" onClick={openAddModal}>
+              Add A Bill
+            </button>
+            <button className="nav-btn bill-btn" onClick={openResetModal}>
+              Reset Monthly Bills
+            </button>
+          </div>
         </div>
       </div>
 
@@ -681,6 +698,20 @@ function Bills() {
             </div>
           </div>
         </>
+      )}
+
+      {resetModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <form onSubmit={handleResetBills}>
+              <p>Are you sure you want to reset your bills?</p>
+              <div className="reset-btns">
+                <button onClick={() => setResetModal(false)}>No, Cancel</button>
+                <button type="submit">Yes, reset bills</button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </>
   );

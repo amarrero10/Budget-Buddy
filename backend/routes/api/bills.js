@@ -92,6 +92,42 @@ router.post("/", async (req, res) => {
   });
 });
 
+router.post("/budget", async (req, res) => {
+  const user = req.user;
+  const {
+    billName,
+    paymentLink,
+    billingDay,
+    billingStartMonth,
+    billingFrequency,
+    dueDate,
+    billAmount,
+    paid,
+    datePaid,
+    budgetId,
+  } = req.body;
+
+  const bill = await Bill.create({
+    userId: user.id,
+    billName,
+    paymentLink,
+    billingDay,
+    billingStartMonth,
+    billingFrequency,
+    dueDate,
+    billAmount,
+    paid,
+    datePaid,
+    budgetId,
+  });
+
+  console.log("NEW BILL FROM BUDGET", bill);
+
+  return res.json({
+    bill: bill,
+  });
+});
+
 router.delete("/:id", async (req, res) => {
   const id = req.params.id;
   const bill = await Bill.findByPk(id);
