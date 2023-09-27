@@ -31,6 +31,10 @@ function BudgetProgressBars({ data }) {
     setBudgetTotals(newBudgetTotals);
   }, [data]);
 
+  data.forEach((element) => {
+    console.log((budgetTotals[element.id] / element.budgetAmount) * 100 <= 100);
+  });
+
   return (
     <div className="budget-progress-bars">
       {data.map((budget) => (
@@ -38,20 +42,36 @@ function BudgetProgressBars({ data }) {
           <div className="budget-name">
             <p>{budget.budgetName}</p>
           </div>
+
           <div className="budget-progress-container">
-            <div
-              className="budget-progress"
-              style={{
-                width: `${(budgetTotals[budget.id] / budget.budgetAmount) * 100}%`,
-              }}
-            ></div>
+            {(budgetTotals[budget.id] / budget.budgetAmount) * 100 <= 100 ? (
+              <div
+                className="budget-progress"
+                style={{
+                  width: `${(budgetTotals[budget.id] / budget.budgetAmount) * 100}%`,
+                }}
+              ></div>
+            ) : (
+              <div
+                className="budget-progress"
+                style={{
+                  width: `100%`,
+                }}
+              ></div>
+            )}
           </div>
           <div className="percent">
             {Math.floor((budgetTotals[budget.id] / budget.budgetAmount) * 100)}%
           </div>
           <div className="budget-details">
             <div className="budget-spent">${budgetTotals[budget.id]} spent</div>
-            <div className="budget-remaining">
+            <div
+              className={
+                (budgetTotals[budget.id] / budget.budgetAmount) * 100 <= 100
+                  ? "budget-remaining"
+                  : "budget-red"
+              }
+            >
               ${budget.budgetAmount - budgetTotals[budget.id]} remaining
             </div>
           </div>

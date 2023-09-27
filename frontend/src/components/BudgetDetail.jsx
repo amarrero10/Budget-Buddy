@@ -24,6 +24,37 @@ function BudgetDetail() {
     budgetId: "",
     isRecurring: "",
   });
+  const [formErrors, setFormErrors] = useState({});
+
+  const validateForm = () => {
+    const errors = {};
+
+    if (!addFormData.billName) {
+      errors.billName = "Name is required";
+    } else if (addFormData.billName.length < 3) {
+      errors.billName = "Name must be 3 characters or greater";
+    }
+
+    if (!addFormData.dueDate) {
+      errors.dueDate = "Date Paid is required";
+    }
+
+    if (!addFormData.billAmount) {
+      errors.billAmount = "Amount is required";
+    } else if (addFormData.billAmount < 1) {
+      errors.billAmount = "Amount must be at least 1";
+    }
+
+    if (isRecurring) {
+      if (!addFormData.billingDay) {
+        errors.billingDay = "Date is required";
+      }
+    }
+
+    setFormErrors(errors);
+
+    return Object.keys(errors).length === 0;
+  };
 
   const handleRadioChange = (e) => {
     const value = e.target.value === "true"; // Convert the string to a boolean
@@ -96,8 +127,14 @@ function BudgetDetail() {
   };
   const handleAddBillSubmit = (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
 
-    const updatedFormData = { ...addFormData, isRecurring: isRecurring, budgetId: id, paid: true };
+    const updatedFormData = {
+      ...addFormData,
+      isRecurring: isRecurring,
+      budgetId: id,
+      paid: true,
+    };
 
     dispatch(billsActions.addBillBudget(updatedFormData));
     dispatch(budgetActions.fetchBudget(id));
@@ -131,6 +168,156 @@ function BudgetDetail() {
           <Menu />
         </div>
         <div className="budget-table">
+          <div className="add-bill-container">
+            <h2>Add Paid Bill:</h2>
+            <form onSubmit={handleAddBillSubmit}>
+              <div className="budget-input">
+                <label htmlFor="name">Name</label>
+                <input
+                  className="budget-in"
+                  type="text"
+                  onChange={addHandleInput}
+                  id="name"
+                  name="billName"
+                  value={addFormData.billName}
+                />
+                {formErrors.billName && <div className="error-text">{formErrors.billName}</div>}
+              </div>
+              <div className="budget-input">
+                <label>Is it recurring?</label>
+                <div>
+                  <input
+                    type="radio"
+                    name="isRecurring"
+                    value="true"
+                    checked={isRecurring === true}
+                    onChange={handleRadioChange}
+                  />{" "}
+                  Yes
+                  <input
+                    type="radio"
+                    name="isRecurring"
+                    value="false"
+                    checked={isRecurring === false}
+                    onChange={handleRadioChange}
+                  />{" "}
+                  No
+                </div>
+              </div>
+              {isRecurring && (
+                <>
+                  <div className="budget-input">
+                    <label htmlFor="payment">Payment Link</label>
+                    <input
+                      className="budget-in"
+                      onChange={addHandleInput}
+                      id="payment"
+                      name="paymentLink"
+                      value={addFormData.paymentLink}
+                    />
+                  </div>
+                  <div className="budget-input">
+                    <label>Date Paid:</label>
+                    <input
+                      className="budget-in"
+                      type="date"
+                      onChange={addHandleInput}
+                      name="dueDate"
+                      min={minDate}
+                      max={currentDated}
+                      value={addFormData.datePaid}
+                    />
+                    {formErrors.dueDate && <div className="error-text">{formErrors.dueDate}</div>}
+                    <input
+                      className="budget-in"
+                      type="hidden"
+                      name="paid"
+                      value={(addFormData.paid = true)}
+                    />
+                  </div>
+                </>
+              )}
+
+              <div>
+                {isRecurring ? (
+                  <>
+                    <div className="budget-input">
+                      <p>Recurs on what date of every month?</p>
+                      <label>Date:</label>
+                      <select
+                        onChange={addHandleInput}
+                        name="billingDay"
+                        value={addFormData.billingDay}
+                      >
+                        <option>--</option>
+                        {numberDates.map((date, idx) => (
+                          <option key={idx}>{date}</option>
+                        ))}
+                      </select>
+                      {formErrors.billingDay && (
+                        <div className="error-text">{formErrors.billingDay}</div>
+                      )}
+                    </div>
+                    <input
+                      className="budget-in"
+                      type="hidden"
+                      name="billingDay"
+                      value={
+                        (addFormData.billingStartMonth = currentDate.toLocaleString("default", {
+                          month: "long",
+                        }))
+                      }
+                    />
+                    <input
+                      className="budget-in"
+                      type="hidden"
+                      name="billingDay"
+                      value={(addFormData.billingFrequency = "every month")}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div className="budget-input">
+                      <label>Date Paid:</label>
+                      <input
+                        className="budget-in"
+                        type="date"
+                        onChange={addHandleInput}
+                        name="dueDate"
+                        min={minDate}
+                        max={currentDated}
+                        value={addFormData.dueDate}
+                      />
+                      {formErrors.dueDate && <div className="error-text">{formErrors.dueDate}</div>}
+                      <input
+                        className="budget-in"
+                        type="hidden"
+                        name="paid"
+                        value={(addFormData.paid = true)}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="budget-input">
+                <label htmlFor="billAMount">Amount</label>
+                <input
+                  className="budget-in"
+                  type="number"
+                  onChange={addHandleInput}
+                  id="billAmount"
+                  name="billAmount"
+                  value={addFormData.billAmount}
+                  placeholder="200"
+                />
+                {formErrors.billAmount && <div className="error-text">{formErrors.billAmount}</div>}
+              </div>
+              <button className="nav-btn bill-btn" type="submit">
+                Add Bill
+              </button>
+            </form>
+          </div>
+
           <table className="custom-table">
             <thead>
               <tr>
@@ -149,7 +336,16 @@ function BudgetDetail() {
               ))}
             </tbody>
           </table>
-          <button className="nav-btn bill-btn" onClick={openResetModal}>
+          {paidBills.length < 1 ? (
+            <p className="not-paid">
+              No paid bills at the moment. To add a paid bill, fill out the form above.
+            </p>
+          ) : null}
+          <button
+            disabled={paidBills.length < 1}
+            className="nav-btn bill-btn reset-budget-btn"
+            onClick={openResetModal}
+          >
             Reset Monthly Bills
           </button>
         </div>
@@ -168,131 +364,6 @@ function BudgetDetail() {
           </div>
         </div>
       )}
-      <>
-        <div>
-          <div>
-            <form onSubmit={handleAddBillSubmit}>
-              <div>
-                <label htmlFor="name">Name</label>
-                <input
-                  type="text"
-                  onChange={addHandleInput}
-                  id="name"
-                  name="billName"
-                  value={addFormData.billName}
-                />
-              </div>
-              <div>
-                <label>Is it recurring?</label>
-                <input
-                  type="radio"
-                  name="isRecurring"
-                  value="true"
-                  checked={isRecurring === true}
-                  onChange={handleRadioChange}
-                />{" "}
-                Yes
-                <input
-                  type="radio"
-                  name="isRecurring"
-                  value="false"
-                  checked={isRecurring === false}
-                  onChange={handleRadioChange}
-                />{" "}
-                No
-              </div>
-              {isRecurring && (
-                <>
-                  <div>
-                    <label htmlFor="payment">Payment Link</label>
-                    <input
-                      onChange={addHandleInput}
-                      id="payment"
-                      name="paymentLink"
-                      value={addFormData.paymentLink}
-                    />
-                  </div>
-                  <div>
-                    <label>Date Paid:</label>
-                    <input
-                      type="date"
-                      onChange={addHandleInput}
-                      name="dueDate"
-                      min={minDate}
-                      max={currentDated}
-                      value={addFormData.datePaid}
-                    />
-                    <input type="hidden" name="paid" value={(addFormData.paid = true)} />
-                  </div>
-                </>
-              )}
-
-              <div>
-                {isRecurring ? (
-                  <>
-                    <div>
-                      <p>Recurs on what date of every month?</p>
-                      <label>Date:</label>
-                      <select
-                        onChange={addHandleInput}
-                        name="billingDay"
-                        value={addFormData.billingDay}
-                      >
-                        <option>--</option>
-                        {numberDates.map((date, idx) => (
-                          <option key={idx}>{date}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <input
-                      type="hidden"
-                      name="billingDay"
-                      value={
-                        (addFormData.billingStartMonth = currentDate.toLocaleString("default", {
-                          month: "long",
-                        }))
-                      }
-                    />
-                    <input
-                      type="hidden"
-                      name="billingDay"
-                      value={(addFormData.billingFrequency = "every month")}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <label>Date Paid:</label>
-                    <input
-                      type="date"
-                      onChange={addHandleInput}
-                      name="dueDate"
-                      min={minDate}
-                      max={currentDated}
-                      value={addFormData.dueDate}
-                    />
-                    <input type="hidden" name="paid" value={(addFormData.paid = true)} />
-                  </>
-                )}
-              </div>
-              <div>
-                <label htmlFor="billAMount">Amount</label>
-                <input
-                  type="number"
-                  onChange={addHandleInput}
-                  id="billAmount"
-                  name="billAmount"
-                  value={addFormData.billAmount}
-                  placeholder="200"
-                />
-              </div>
-              <div>
-                <label>Budget</label>
-              </div>
-              <button type="submit">Add Bill</button>
-            </form>
-          </div>
-        </div>
-      </>
     </>
   );
 }

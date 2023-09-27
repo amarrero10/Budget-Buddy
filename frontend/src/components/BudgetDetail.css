@@ -4,4 +4,38 @@
 
 .budget-table {
   margin-left: 10px;
+  width: 100%;
+  padding-right: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 90px;
+}
+
+.add-bill-container {
+  box-shadow: -1px 5px 29px 1px rgba(0, 0, 0, 0.28);
+  border-radius: 7px;
+  margin-bottom: 50px;
+  text-align: center;
+  width: 400px;
+  padding-bottom: 10px;
+}
+
+.budget-input {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 20px;
+  margin-top: 5px;
+}
+
+.budget-in {
+  width: 300px;
+  padding: 10px;
+  font-size: 1rem;
+}
+
+.not-paid {
+  margin-top: 10px;
+  font-size: 1.2rem;
 }

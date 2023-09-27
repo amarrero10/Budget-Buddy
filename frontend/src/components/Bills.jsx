@@ -143,7 +143,6 @@ function Bills() {
     billAmount: "",
     dueDate: "",
     budgetId: "",
-    paid: "",
     isRecurring: "",
   });
 
@@ -278,7 +277,7 @@ function Bills() {
   useEffect(() => {}, [bills]);
 
   // GET ONLY RECURRING BILLS
-  let recurringBills = bills?.filter((bill) => bill.billingMonth !== null);
+  let recurringBills = bills?.filter((bill) => bill.billingDay !== null);
 
   let oneTimeBills = bills?.filter((bill) => bill.dueDate !== null);
 
@@ -653,7 +652,6 @@ function Bills() {
                         name="billingDay"
                         value={(addFormData.billingFrequency = "every month")}
                       />
-                      <input type="hidden" name="paid" value={(addFormData.paid = false)} />
                     </>
                   ) : (
                     <>
