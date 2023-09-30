@@ -72,8 +72,14 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       billAmount: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         allowNull: false,
+        validate: {
+          isFloat: {
+            args: [2], // Limit to 2 decimal places
+            msg: "Bill amount must have exactly 2 decimal places.",
+          },
+        },
       },
       budgetId: {
         type: DataTypes.INTEGER,

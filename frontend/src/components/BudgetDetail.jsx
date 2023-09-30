@@ -330,8 +330,8 @@ function BudgetDetail() {
               {paidBills?.map((bill) => (
                 <tr key={bill.id}>
                   <td>{bill?.billName}</td>
-                  <td>{bill?.billAmount}</td>
-                  <td>{bill?.datePaid ? bill?.datePaid : bill?.dueDate} </td>
+                  <td>${bill?.billAmount.toFixed(2)}</td>
+                  <td>{bill?.datePaid ? bill?.datePaid.slice(0, 10) : bill?.dueDate} </td>
                 </tr>
               ))}
             </tbody>

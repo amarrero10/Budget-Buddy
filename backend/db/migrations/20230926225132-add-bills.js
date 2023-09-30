@@ -39,7 +39,7 @@ module.exports = {
           type: Sequelize.STRING,
         },
         billAmount: {
-          type: Sequelize.INTEGER,
+          type: Sequelize.FLOAT,
           allowNull: false,
         },
         paid: {

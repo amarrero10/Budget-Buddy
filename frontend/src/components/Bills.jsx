@@ -186,7 +186,16 @@ function Bills() {
     if (isValid) {
       setAddOpenModal(false);
 
-      const updatedFormData = { ...addFormData, isRecurring: isRecurring };
+      // Check if billAmount doesn't contain a decimal point
+      const billAmount = addFormData.billAmount;
+      const newValue = billAmount.includes(".") ? billAmount : billAmount + ".00";
+
+      // Update the form data with the formatted billAmount
+      const updatedFormData = {
+        ...addFormData,
+        isRecurring: isRecurring,
+        billAmount: newValue, // Updated billAmount
+      };
 
       dispatch(billsActions.addBill(updatedFormData));
       setAddFormData({
@@ -195,7 +204,7 @@ function Bills() {
         billingDay: "",
         billingStartMonth: "",
         billingFrequency: "",
-        billAmount: "",
+        billAmount: "", // Reset billAmount
         dueDate: "",
         budgetId: "",
         isRecurring: "",
@@ -390,6 +399,21 @@ function Bills() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleCancel = () => {
+    setAddFormData({
+      billName: "",
+      paymentLink: "",
+      billingDay: "",
+      billingStartMonth: "",
+      billingFrequency: "",
+      billAmount: "", // Reset billAmount
+      dueDate: "",
+      budgetId: "",
+      isRecurring: "",
+    });
+    setAddOpenModal(false);
+  };
+
   return (
     <>
       <div className="bills-page">
@@ -428,7 +452,7 @@ function Bills() {
                       </td>
                       <td>{bill.paid ? bill.datePaid : "-"}</td>
                       <td>{bill.billName}</td>
-                      <td>{bill.billAmount}</td>
+                      <td>${bill.billAmount.toFixed(2)}</td>
                       <td>
                         {bill?.dueDate
                           ? bill.dueDate
@@ -468,7 +492,7 @@ function Bills() {
                     return (
                       <tr key={bill.id}>
                         <td>{bill.billName}</td>
-                        <td>{bill.billAmount}</td>
+                        <td>${bill.billAmount.toFixed(2)}</td>
                         <td>{bill?.datePaid.slice(0, 10)}</td>
                         <td className="edit">
                           <BsPencilSquare
@@ -737,7 +761,7 @@ function Bills() {
                   )}
                 </div>
                 <div>
-                  <label htmlFor="billAMount">Amount</label>
+                  <label htmlFor="billAmount">Amount</label>
                   <input
                     type="number"
                     onChange={addHandleInput}
@@ -761,7 +785,7 @@ function Bills() {
                   {errors.budgetId && <p className="error-text">{errors.budgetId}</p>}
                 </div>
                 <button type="submit">Add Bill</button>
-                <button onClick={() => setAddOpenModal(false)}>Cancel</button>
+                <button onClick={handleCancel}>Cancel</button>
               </form>
             </div>
           </div>

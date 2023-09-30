@@ -37,7 +37,7 @@ function BudgetProgressBars({ data }) {
 
   return (
     <div className="budget-progress-bars">
-      {data.map((budget) => (
+      {data?.map((budget) => (
         <div key={budget.id} className="budget-progress-bar">
           <div className="budget-name">
             <p>{budget.budgetName}</p>
@@ -64,7 +64,9 @@ function BudgetProgressBars({ data }) {
             {Math.floor((budgetTotals[budget.id] / budget.budgetAmount) * 100)}%
           </div>
           <div className="budget-details">
-            <div className="budget-spent">${budgetTotals[budget.id]} spent</div>
+            <div className="budget-spent">
+              ${parseFloat(budgetTotals[budget?.id]).toFixed(2)} spent
+            </div>
             <div
               className={
                 (budgetTotals[budget.id] / budget.budgetAmount) * 100 <= 100
@@ -72,7 +74,7 @@ function BudgetProgressBars({ data }) {
                   : "budget-red"
               }
             >
-              ${budget.budgetAmount - budgetTotals[budget.id]} remaining
+              ${(budget?.budgetAmount - budgetTotals[budget?.id]).toFixed(2)} remaining
             </div>
           </div>
         </div>

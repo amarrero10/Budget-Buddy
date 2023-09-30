@@ -131,7 +131,7 @@ function Dashboard() {
     allData.push({
       type: "bill",
       name: bill.billName,
-      amount: bill.billAmount,
+      amount: bill.billAmount.toFixed(2),
       paid: bill.paid,
       budget: bill?.Budget?.budgetName,
       date: calculateDueDate(bill),
