@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Budget.css";
 import Menu from "./Menu";
-import stringHash from "string-hash";
 import { useDispatch, useSelector } from "react-redux";
 import * as budgetActions from "../store/budgets";
 import { fetchBills } from "../store/bills";
@@ -100,6 +99,11 @@ function Budget() {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(budgetActions.createBudget(formData));
+
+    setFormData({
+      budgetName: "",
+      budgetAmount: "",
+    });
   };
 
   let totalBudget = 0;
@@ -156,8 +160,6 @@ function Budget() {
     dispatch(budgetActions.deleteABudget(currentBudgetId));
     setDeleteBudgetModal(false);
   };
-
-  console.log("NEW BUDGETS", budgets);
 
   return (
     <>
@@ -237,6 +239,7 @@ function Budget() {
                 </React.Fragment>
               </div>
             ))}
+            {budgets.length < 1 && <p>No existing Budgets. Add one above.</p>}
           </div>
         </div>
       </div>
@@ -290,7 +293,6 @@ function Budget() {
                   onClick={(e) => {
                     setDeleteBudgetModal(false);
                     e.preventDefault();
-                    console.log("ID", currentBudgetId);
                   }}
                 >
                   Cancel

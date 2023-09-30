@@ -136,6 +136,7 @@ function Dashboard() {
       budget: bill?.Budget?.budgetName,
       date: calculateDueDate(bill),
       dueDate: dueDate ? dueDate.toLocaleDateString() : null,
+      datePaid: bill.datePaid?.slice(0, 10),
     });
   });
 
@@ -152,9 +153,6 @@ function Dashboard() {
 
   // Convert the date strings to Date objects for comparison
   allData.forEach((item) => {
-    if (item.date) {
-      item.date = new Date(item.date);
-    }
     if (item.dueDate) {
       item.dueDate = new Date(item.dueDate);
     }
@@ -176,12 +174,14 @@ function Dashboard() {
   // Convert the sorted Date objects back to formatted strings if needed
   allData.forEach((item) => {
     if (item.date) {
-      item.date = item.date.toLocaleDateString();
+      item.date = item.date.toISOString().slice(0, 10);
     }
     if (item.dueDate) {
       item.dueDate = item.dueDate.toLocaleDateString();
     }
   });
+
+  console.log("ALL DATA", allData);
 
   const data = {
     labels:
@@ -263,7 +263,7 @@ function Dashboard() {
                 <div className="dashboard-card-three">
                   <h2>Savings</h2>
                   <FaSackDollar className="icon" />
-                  <p className="progress-tracker">Combined Progress Made:</p>
+                  {/* <p className="progress-tracker">Combined Progress Made:</p>
                   <div className="progress-bar">
                     <div className="progress" style={{ width: `${totalSavings}%` }}>
                       {totalSavings}%
@@ -271,7 +271,8 @@ function Dashboard() {
                   </div>
 
                   <p className="savings">{savings ? `Combined Saved: $${totalSavings}` : ""}</p>
-                  <p className="goal">{savings ? `Combined Target Amount: $${savingsGoal}` : ""}</p>
+                  <p className="goal">{savings ? `Combined Target Amount: $${savingsGoal}` : ""}</p> */}
+                  <p>Coming Soon</p>
                 </div>
               </Link>
             ) : (
@@ -287,28 +288,32 @@ function Dashboard() {
 
           <div className="table">
             <p className="recent">Transaction History:</p>
-            <table className="custom-table">
-              <thead>
-                <tr>
-                  <th className="table-header">Budget</th>
-                  <th className="table-header">Transaction Type</th>
-                  <th className="table-header">Paid</th>
-                  <th className="table-header">Amount</th>
-                  <th className="table-header">Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {allData.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.type === "bill" ? item.budget : "-"}</td>
-                    <td>{item.name}</td>
-                    <td>{item.paid ? "✔️" : "❌"}</td>
-                    <td>{item.amount > 0 ? `$${item.amount}` : "-"}</td>
-                    <td>{item.date ? item.date : item.dueDate}</td>
+            {allData.length >= 1 ? (
+              <table className="custom-table">
+                <thead>
+                  <tr>
+                    <th className="table-header">Budget</th>
+                    <th className="table-header">Transactions</th>
+                    <th className="table-header">Paid</th>
+                    <th className="table-header">Amount</th>
+                    <th className="table-header">Date</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {allData.map((item, index) => (
+                    <tr key={index}>
+                      <td>{item.type === "bill" ? item.budget : "-"}</td>
+                      <td>{item.name}</td>
+                      <td>{item.paid ? "✔️" : "❌"}</td>
+                      <td>{item.amount > 0 ? `$${item.amount}` : "-"}</td>
+                      <td>{item.paid ? item.datePaid : item.date}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p>No Transactions to show.</p>
+            )}
           </div>
 
           {/*  */}

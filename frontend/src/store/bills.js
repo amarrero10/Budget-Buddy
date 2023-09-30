@@ -51,8 +51,6 @@ export const fetchBill = (billId) => async (dispatch) => {
   const data = await res.json();
 
   dispatch(setBill(data));
-
-  console.log("BILL", data.bill);
 };
 
 export const toggleBillPaidStatus =
@@ -180,15 +178,13 @@ export const editABill = (billId, formData) => async (dispatch, getState) => {
     return;
   }
 
-  const res = await csrfFetch(`/api/bills/update/bill/${billId}`, {
+  const res = await csrfFetch(`/api/bills/update-bill/${billId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(formData),
   });
-
-  console.log("FORM DATA", formData);
 
   if (!res.ok) {
     throw new Error("Failed to update the bill");

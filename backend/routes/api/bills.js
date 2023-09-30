@@ -121,8 +121,6 @@ router.post("/budget", async (req, res) => {
     budgetId,
   });
 
-  console.log("NEW BILL FROM BUDGET", bill);
-
   return res.json({
     bill: bill,
   });

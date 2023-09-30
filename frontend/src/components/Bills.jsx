@@ -100,6 +100,7 @@ function Bills() {
   const [resetModal, setResetModal] = useState(false);
   const [selectedBill, setSelectedBill] = useState(null);
   const [isRecurring, setIsRecurring] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const handleRadioChange = (e) => {
     const value = e.target.value === "true"; // Convert the string to a boolean
@@ -112,9 +113,9 @@ function Bills() {
     }));
   };
 
-  const bills = useSelector((state) => state.bills.bills);
+  const bills = useSelector((state) => state.bills?.bills);
   const bill = useSelector((state) => state.bills?.bill?.billId?.bill);
-  const budgets = useSelector((state) => state.budgets.budgets);
+  const budgets = useSelector((state) => state.budgets?.budgets);
   const dispatch = useDispatch();
 
   // EDIT BILL STUFF
@@ -180,15 +181,29 @@ function Bills() {
   const handleAddBillSubmit = (e) => {
     e.preventDefault();
 
-    setAddOpenModal(false);
+    const isValid = validateForm();
 
-    const updatedFormData = { ...addFormData, isRecurring: isRecurring };
+    if (isValid) {
+      setAddOpenModal(false);
 
-    dispatch(billsActions.addBill(updatedFormData));
+      const updatedFormData = { ...addFormData, isRecurring: isRecurring };
+
+      dispatch(billsActions.addBill(updatedFormData));
+      setAddFormData({
+        billName: "",
+        paymentLink: "",
+        billingDay: "",
+        billingStartMonth: "",
+        billingFrequency: "",
+        billAmount: "",
+        dueDate: "",
+        budgetId: "",
+        isRecurring: "",
+      });
+    }
   };
 
   const handleResetBills = (e) => {
-    console.log("Resetting all bills to unpaid");
     e.preventDefault();
     recurringBills.forEach((bill) => {
       handleMarkAsPaid(bill.id, false);
@@ -313,8 +328,6 @@ function Bills() {
   currentPaidDate.setHours(currentPaidDate.getHours());
   const lastDayOfMonth = currentPaidDate.toISOString().split("T")[0];
 
-  console.log(new Date().toISOString());
-
   // Filter the one-time bills array to get bills due in the current month
   const oneTimeBillsForCurrentMonth = oneTimeBills.filter((bill) => {
     const datePaid = new Date(bill.datePaid);
@@ -344,107 +357,159 @@ function Bills() {
     return dateA - dateB;
   });
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Perform your validation checks here
+    if (!addFormData.billName) {
+      newErrors.billName = "Name is required";
+    }
+
+    if (addFormData.isRecurring && addFormData.billingDay === "--") {
+      newErrors.billingDay = "Billing Day is required for recurring bills";
+    }
+
+    if (addFormData.dueDate === "") {
+      newErrors.dueDate = "Date Paid is required";
+    }
+
+    if (!addFormData.billAmount) {
+      newErrors.billAmount = "Amount is required";
+    } else if (addFormData.billAmount <= 0) {
+      newErrors.billAmount = "Amount must be greater than 0";
+    }
+
+    if (addFormData.budgetId === "--") {
+      newErrors.budgetId = "Budget is required";
+    }
+
+    // Set the errors state
+    setErrors(newErrors);
+
+    // Return true if there are no errors, indicating the form is valid
+    return Object.keys(newErrors).length === 0;
+  };
+
   return (
     <>
       <div className="bills-page">
         <div>
           <Menu />
         </div>
-        <div className="bill-tables">
-          <div>
-            <p>Monthly Recurring Bills:</p>
-            <table className="custom-table">
-              <thead>
-                <tr>
-                  <th className="table-header">Paid</th>
-                  <th className="table-header">Date Paid</th>
-                  <th className="table-header">Name</th>
-                  <th className="table-header">Amount</th>
-                  <th className="table-header">Next Due Date</th>
-                  <th className="table-header">Edit</th>
-                  <th className="table-header">Delete</th>
-                  <th className="table-header">Payment Link</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recurringBills?.map((bill, index) => (
-                  <tr key={bill.id} className={bill.paid ? "paid" : ""}>
-                    <td>
-                      <div className="bill-paid">
-                        <button
-                          onClick={() => handleMarkAsPaid(bill.id, !bill.paid)}
-                          className={`check-button ${bill.paid ? "checked" : ""}`}
-                        >
-                          &#10003; {/* Checkmark symbol */}
-                        </button>
-                      </div>
-                    </td>
-                    <td>{bill.paid ? bill.datePaid : "-"}</td>
-                    <td>{bill.billName}</td>
-                    <td>{bill.billAmount}</td>
-                    <td>
-                      {bill?.dueDate ? bill.dueDate : calculateDueDate(bill)?.toLocaleDateString()}
-                    </td>
-
-                    <td className="edit">
-                      <BsPencilSquare onClick={() => handleEdit(bill.id)} className="bill-icon" />
-                    </td>
-                    <td className="delete">
-                      <BsTrash3 onClick={() => handleDelete(bill.id)} className="bill-delete" />
-                    </td>
-                    <td className="edit">
-                      <a href={bill.paymentLink} target="_blank" rel="noreferrer">
-                        <BsLink className="bill-icon" />
-                      </a>
-                    </td>
+        {bills.length >= 1 ? (
+          <div className="bill-tables">
+            <div>
+              <p>Monthly Recurring Bills:</p>
+              <table className="custom-table">
+                <thead>
+                  <tr>
+                    <th className="table-header">Paid</th>
+                    <th className="table-header">Date Paid</th>
+                    <th className="table-header">Name</th>
+                    <th className="table-header">Amount</th>
+                    <th className="table-header">Next Due Date</th>
+                    <th className="table-header">Edit</th>
+                    <th className="table-header">Delete</th>
+                    <th className="table-header">Payment Link</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div>
-            <p>Non-Recurring Bills For The Month:</p>
-            <table className="custom-table">
-              <thead>
-                <tr>
-                  <th className="table-header">Name</th>
-                  <th className="table-header">Amount</th>
-                  <th className="table-header">Date</th>
-                  <th className="table-header">Edit</th>
-                  <th className="table-header">Delete</th>
-                </tr>
-              </thead>
-              <tbody>
-                {oneTimeBillsForCurrentMonth?.map((bill) => {
-                  return (
-                    <tr key={bill.id}>
+                </thead>
+                <tbody>
+                  {recurringBills?.map((bill, index) => (
+                    <tr key={bill.id} className={bill.paid ? "paid" : ""}>
+                      <td>
+                        <div className="bill-paid">
+                          <button
+                            onClick={() => handleMarkAsPaid(bill.id, !bill.paid)}
+                            className={`check-button ${bill.paid ? "checked" : ""}`}
+                          >
+                            &#10003; {/* Checkmark symbol */}
+                          </button>
+                        </div>
+                      </td>
+                      <td>{bill.paid ? bill.datePaid : "-"}</td>
                       <td>{bill.billName}</td>
                       <td>{bill.billAmount}</td>
-                      <td>{bill?.datePaid.slice(0, 10)}</td>
+                      <td>
+                        {bill?.dueDate
+                          ? bill.dueDate
+                          : calculateDueDate(bill)?.toLocaleDateString()}
+                      </td>
+
                       <td className="edit">
-                        <BsPencilSquare
-                          onClick={() => handleOneTimeEdit(bill.id)}
-                          className="bill-icon"
-                        />
+                        <BsPencilSquare onClick={() => handleEdit(bill.id)} className="bill-icon" />
                       </td>
                       <td className="delete">
                         <BsTrash3 onClick={() => handleDelete(bill.id)} className="bill-delete" />
                       </td>
+                      <td className="edit">
+                        <a href={bill.paymentLink} target="_blank" rel="noreferrer">
+                          <BsLink className="bill-icon" />
+                        </a>
+                      </td>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <p>Non-Recurring Bills For The Month:</p>
+              <table className="custom-table">
+                <thead>
+                  <tr>
+                    <th className="table-header">Name</th>
+                    <th className="table-header">Amount</th>
+                    <th className="table-header">Date</th>
+                    <th className="table-header">Edit</th>
+                    <th className="table-header">Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {oneTimeBillsForCurrentMonth?.map((bill) => {
+                    return (
+                      <tr key={bill.id}>
+                        <td>{bill.billName}</td>
+                        <td>{bill.billAmount}</td>
+                        <td>{bill?.datePaid.slice(0, 10)}</td>
+                        <td className="edit">
+                          <BsPencilSquare
+                            onClick={() => handleOneTimeEdit(bill.id)}
+                            className="bill-icon"
+                          />
+                        </td>
+                        <td className="delete">
+                          <BsTrash3 onClick={() => handleDelete(bill.id)} className="bill-delete" />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className="bills-btns">
+              <button className="nav-btn bill-btn" onClick={openAddModal}>
+                Add A Bill
+              </button>
+              <button className="nav-btn bill-btn" onClick={openResetModal}>
+                Reset Monthly Bills
+              </button>
+            </div>
           </div>
-          <div className="bills-btns">
-            <button className="nav-btn bill-btn" onClick={openAddModal}>
-              Add A Bill
-            </button>
-            <button className="nav-btn bill-btn" onClick={openResetModal}>
-              Reset Monthly Bills
-            </button>
+        ) : (
+          <div>
+            <div className="bills-btns">
+              {budgets.length < 1 ? (
+                <p>Please create a budget to get started.</p>
+              ) : (
+                <div>
+                  <p>No Bills yet. Click the button below to get started! </p>
+                  <button className="nav-btn bill-btn" onClick={openAddModal}>
+                    Add A Bill
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {editOpenModal && selectedBill && (
@@ -589,6 +654,7 @@ function Bills() {
                     name="billName"
                     value={addFormData.billName}
                   ></input>
+                  {errors.billName && <p className="error-text">{errors.billName}</p>}
                 </div>
                 <div>
                   <label>Is it recurring?</label>
@@ -637,6 +703,7 @@ function Bills() {
                             <option key={idx}>{date}</option>
                           ))}
                         </select>
+                        {errors.billingDay && <p className="error-text">{errors.billingDay}</p>}
                       </div>
                       <input
                         type="hidden"
@@ -664,6 +731,7 @@ function Bills() {
                         max={lastDayOfMonth}
                         value={addFormData.dueDate}
                       ></input>
+                      {errors.dueDate && <p className="error-text">{errors.dueDate}</p>}
                       <input type="hidden" name="paid" value={(addFormData.paid = true)} />
                     </>
                   )}
@@ -678,6 +746,7 @@ function Bills() {
                     value={addFormData.billAmount}
                     placeholder="200"
                   ></input>
+                  {errors.billAmount && <p className="error-text">{errors.billAmount}</p>}
                 </div>
                 <div>
                   <label>Budget</label>
@@ -689,6 +758,7 @@ function Bills() {
                       </option>
                     ))}
                   </select>
+                  {errors.budgetId && <p className="error-text">{errors.budgetId}</p>}
                 </div>
                 <button type="submit">Add Bill</button>
                 <button onClick={() => setAddOpenModal(false)}>Cancel</button>
