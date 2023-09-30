@@ -43,7 +43,6 @@ export const fetchBudget = (budgetId) => async (dispatch) => {
   const res = await csrfFetch(`/api/budgets/${budgetId}`);
   const data = await res.json();
 
-  console.log("BUDGET DATA", data);
   dispatch(setBudget(data.budget));
 };
 
@@ -132,7 +131,7 @@ const budgetsReducer = (state = initialState, action) => {
       return state;
     case DELETE_BUDGET:
       const updatedBudgets = state.budgets.filter((budget) => budget.id !== action.payload);
-      console.log("IPDATED!!!", updatedBudgets);
+
       return {
         ...state,
         budgets: updatedBudgets,
