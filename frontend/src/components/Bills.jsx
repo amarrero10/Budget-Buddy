@@ -378,7 +378,7 @@ function Bills() {
       newErrors.billingDay = "Billing Day is required for recurring bills";
     }
 
-    if (addFormData.dueDate === "") {
+    if (!addFormData.isRecurring && addFormData.dueDate === "") {
       newErrors.dueDate = "Date Paid is required";
     }
 
