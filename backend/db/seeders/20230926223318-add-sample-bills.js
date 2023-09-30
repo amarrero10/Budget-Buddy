@@ -44,8 +44,8 @@ module.exports = {
           billAmount: 80.13,
           paid: true,
           budgetId: 1,
-          dueDate: new Date("2023-09-12T12:00:00Z"),
-          datePaid: new Date("2023-09-12T12:00:00Z"),
+          dueDate: new Date("2023-09-07T12:00:00Z"),
+          datePaid: new Date("2023-09-07T12:00:00Z"),
         },
         {
           userId: 1,
