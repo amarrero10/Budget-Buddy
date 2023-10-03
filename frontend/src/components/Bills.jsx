@@ -374,7 +374,7 @@ function Bills() {
       newErrors.billName = "Name is required";
     }
 
-    if (addFormData.isRecurring && addFormData.billingDay === "--") {
+    if (addFormData.isRecurring && addFormData.billingDay === "") {
       newErrors.billingDay = "Billing Day is required for recurring bills";
     }
 
@@ -388,7 +388,7 @@ function Bills() {
       newErrors.billAmount = "Amount must be greater than 0";
     }
 
-    if (addFormData.budgetId === "--") {
+    if (addFormData.budgetId === "") {
       newErrors.budgetId = "Budget is required";
     }
 
@@ -411,6 +411,7 @@ function Bills() {
       budgetId: "",
       isRecurring: "",
     });
+    setErrors({});
     setAddOpenModal(false);
   };
 
