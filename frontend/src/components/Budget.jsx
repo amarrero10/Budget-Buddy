@@ -25,6 +25,11 @@ function Budget() {
     budgetName: "",
     budgetAmount: "",
   });
+  const [formErrors, setFormErrors] = useState({
+    budgetName: "",
+    budgetAmount: "",
+  });
+
   const [selectedBudgetId, setSelectedBudgetId] = useState(null);
 
   const handleCreateBudgetInput = (e) => {
@@ -96,14 +101,39 @@ function Budget() {
     dispatch(fetchBills());
   }, [dispatch]);
 
+  const validateForm = () => {
+    let valid = true;
+    const errors = {};
+
+    // Validate budgetName
+    if (!formData.budgetName) {
+      errors.budgetName = "Budget Name is required.";
+      valid = false;
+    }
+
+    // Validate budgetAmount
+    if (!formData.budgetAmount) {
+      errors.budgetAmount = "Budget Amount is required.";
+      valid = false;
+    } else if (isNaN(formData.budgetAmount) || parseFloat(formData.budgetAmount) <= 0) {
+      errors.budgetAmount = "Budget Amount must be a positive number.";
+      valid = false;
+    }
+
+    setFormErrors(errors);
+    return valid;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(budgetActions.createBudget(formData));
+    if (validateForm()) {
+      dispatch(budgetActions.createBudget(formData));
 
-    setFormData({
-      budgetName: "",
-      budgetAmount: "",
-    });
+      setFormData({
+        budgetName: "",
+        budgetAmount: "",
+      });
+    }
   };
 
   let totalBudget = 0;
@@ -184,6 +214,7 @@ function Budget() {
                       value={formData.budgetName}
                       onChange={handleCreateBudgetInput}
                     ></input>
+                    {formErrors.budgetName && <p className="error-text">{formErrors.budgetName}</p>}
                   </div>
                   <div className="input-section">
                     <label htmlFor="budget-amount">What is your total budget?</label>
@@ -195,6 +226,9 @@ function Budget() {
                       value={formData.budgetAmount}
                       onChange={handleCreateBudgetInput}
                     ></input>
+                    {formErrors.budgetAmount && (
+                      <p className="error-text">{formErrors.budgetAmount}</p>
+                    )}
                   </div>
 
                   <button type="submit" className="nav-btn create-btn">
@@ -289,22 +323,28 @@ function Budget() {
             <div className="modal-content">
               <form>
                 <input type="hidden" name="budgetId" value={currentBudgetId} />
-                <button
-                  onClick={(e) => {
-                    setDeleteBudgetModal(false);
-                    e.preventDefault();
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => {
-                    setDeleteBudgetModal(false);
-                    handleDeleteBudget(currentBudgetId); // Pass the callback function
-                  }}
-                >
-                  Yes, Delete
-                </button>
+                <p>
+                  Are you sure you want to delete this budget? Doing so will delete all bills
+                  associated to this budget.
+                </p>
+                <div className="modal-btns">
+                  <button
+                    onClick={(e) => {
+                      setDeleteBudgetModal(false);
+                      e.preventDefault();
+                    }}
+                  >
+                    No, Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      setDeleteBudgetModal(false);
+                      handleDeleteBudget(currentBudgetId); // Pass the callback function
+                    }}
+                  >
+                    Yes, Delete
+                  </button>
+                </div>
               </form>
             </div>
           </div>

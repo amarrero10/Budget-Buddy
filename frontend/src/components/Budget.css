@@ -18,7 +18,7 @@
   border-radius: 7px;
   padding-left: 5px;
   padding-right: 5px;
-  height: 270px;
+  height: 320px;
   margin-top: 90px;
 }
 
@@ -69,4 +69,9 @@
 .create-btn {
   margin-top: 10px;
   margin-left: 140px;
+}
+
+.modal-btns {
+  display: flex;
+  justify-content: space-around;
 }

@@ -452,7 +452,7 @@ function Bills() {
                       </td>
                       <td>{bill.paid ? bill.datePaid : "-"}</td>
                       <td>{bill.billName}</td>
-                      <td>${bill.billAmount.toFixed(2)}</td>
+                      <td>${Number(bill?.billAmount).toFixed(2)}</td>
                       <td>
                         {bill?.dueDate
                           ? bill.dueDate

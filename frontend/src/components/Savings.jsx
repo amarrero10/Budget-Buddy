@@ -14,11 +14,7 @@ function Savings() {
           <Menu />
         </div>
         <div>
-          {savings?.map((saving) => (
-            <div>
-              <p>{saving.goalName}</p>
-            </div>
-          ))}
+          <p>Coming Soon</p>
         </div>
       </div>
     </>

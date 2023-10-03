@@ -6,34 +6,47 @@ function BudgetProgressBars({ data }) {
 
   useEffect(() => {
     const newBudgetTotals = {};
-    const budgetSpent = {};
+
+    // Get the current month and year
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1; // Months are zero-based, so add 1
+    const currentYear = currentDate.getFullYear();
 
     for (let i = 0; i < data?.length; i++) {
       const budget = data[i];
       const billAmounts = [];
 
+      // Iterate through the bills within the budget
       for (let j = 0; j < budget.Bills?.length; j++) {
-        if (budget.Bills[j].budgetId === budget.id && budget.Bills[j].paid) {
-          const budgetBill = budget.Bills[j].billAmount;
-          billAmounts.push(budgetBill);
+        const bill = budget.Bills[j];
+
+        // Check if the bill is paid
+        if (bill.paid) {
+          // Parse the bill's datePaid into a Date object
+          const billDate = new Date(bill.datePaid);
+
+          // Adjust the bill's date by adding the time zone offset in minutes
+          const offset = billDate.getTimezoneOffset();
+          billDate.setMinutes(billDate.getMinutes() + offset);
+
+          // Extract the month and year from the adjusted date
+          const billMonth = billDate.getMonth() + 1; // Add 1 to match the current month format
+          const billYear = billDate.getFullYear();
+
+          // Check if the bill's month and year match the current month and year
+          if (billMonth === currentMonth && billYear === currentYear) {
+            billAmounts.push(bill.billAmount);
+          }
         }
       }
 
-      budgetSpent[budget.id] = billAmounts;
-    }
-
-    for (const budgetId in budgetSpent) {
-      const billAmounts = budgetSpent[budgetId];
+      // Calculate the total spent for this budget
       const total = billAmounts.reduce((acc, amount) => acc + amount, 0);
-      newBudgetTotals[budgetId] = total;
+      newBudgetTotals[budget.id] = total;
     }
 
     setBudgetTotals(newBudgetTotals);
   }, [data]);
-
-  data.forEach((element) => {
-    console.log((budgetTotals[element.id] / element.budgetAmount) * 100 <= 100);
-  });
 
   return (
     <div className="budget-progress-bars">

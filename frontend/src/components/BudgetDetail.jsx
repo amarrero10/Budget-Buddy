@@ -161,6 +161,24 @@ function BudgetDetail() {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
     27, 28, 29, 30, 31,
   ];
+
+  // Filter bills for the current month that have been paid
+  const currentMonthPaidBills = budget?.Bills?.filter((bill) => {
+    const billDate = new Date(bill.datePaid);
+    const timezoneOffsetMinutes = billDate.getTimezoneOffset();
+
+    // Adjust the date by subtracting the offset in minutes
+    billDate.setMinutes(billDate.getMinutes() + timezoneOffsetMinutes);
+
+    return (
+      bill.paid &&
+      billDate.getMonth() + 1 === Number(currentMonth) &&
+      billDate.getFullYear() === Number(currentYear)
+    );
+  });
+
+  console.log("CURRENT BILLS", currentMonthPaidBills);
+
   return (
     <>
       <div className="budget-detail">
@@ -327,7 +345,7 @@ function BudgetDetail() {
               </tr>
             </thead>
             <tbody>
-              {paidBills?.map((bill) => (
+              {currentMonthPaidBills?.map((bill) => (
                 <tr key={bill.id}>
                   <td>{bill?.billName}</td>
                   <td>${bill?.billAmount.toFixed(2)}</td>
@@ -336,13 +354,13 @@ function BudgetDetail() {
               ))}
             </tbody>
           </table>
-          {paidBills.length < 1 ? (
+          {currentMonthPaidBills?.length < 1 ? (
             <p className="not-paid">
               No paid bills at the moment. To add a paid bill, fill out the form above.
             </p>
           ) : null}
           <button
-            disabled={paidBills.length < 1}
+            disabled={currentMonthPaidBills?.length < 1}
             className="nav-btn bill-btn reset-budget-btn"
             onClick={openResetModal}
           >
