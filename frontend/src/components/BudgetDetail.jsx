@@ -136,6 +136,19 @@ function BudgetDetail() {
       paid: true,
     };
 
+    setAddFormData({
+      billName: "",
+      paymentLink: "",
+      billingDay: "",
+      billingStartMonth: "",
+      billingFrequency: "",
+      billAmount: "",
+      dueDate: "",
+      datePaid: "",
+      budgetId: "",
+      isRecurring: "",
+    });
+
     dispatch(billsActions.addBillBudget(updatedFormData));
     dispatch(budgetActions.fetchBudget(id));
   };
