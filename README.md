@@ -1,5 +1,7 @@
 # Budget Buddy
 
+https://budgetbuddy-othz.onrender.com/
+
 Budget Buddy is a personal finance management web application that helps you track your expenses, manage budgets, and save for your financial goals.
 
 ## Features
