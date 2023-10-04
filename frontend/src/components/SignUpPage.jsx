@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, Redirect, useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { FaLock, FaPortrait, FaRegEnvelope, FaUserCircle } from "react-icons/fa";
 import * as sessionActions from "../store/session";
 import { useDispatch, useSelector } from "react-redux";
-import logo from "../assets/logo.png";
 import { motion } from "framer-motion";
 import "./SignUp.css";
 
