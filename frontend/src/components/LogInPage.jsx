@@ -76,6 +76,7 @@ function LogInPage() {
                 whileHover={{ scale: 1.1 }}
                 onClick={handleDemoUser}
                 className="signup-btn"
+                type="button"
               >
                 Demo User
               </m.button>

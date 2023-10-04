@@ -17,6 +17,7 @@ function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   if (sessionUser) return <Redirect to="/dashboard" />;
   const validateForm = () => {
@@ -51,6 +52,10 @@ function SignUpPage() {
     } else if (password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
+    if (password !== confirmPassword) {
+      // Passwords do not match, set an error message
+      newErrors.confirmPassword = "Passwords do not match";
+    }
 
     setErrors(newErrors);
 
@@ -78,7 +83,7 @@ function SignUpPage() {
     } catch (err) {
       const data = await err.json();
       if (data && data.errors) {
-        console.log(data);
+        setErrors(data.errors);
       }
     }
   };
@@ -173,8 +178,29 @@ function SignUpPage() {
                 type="password"
               ></input>
             </div>
+
             {errors.password && <p className="error-text">{errors.password}</p>}
           </div>
+          <div className="input-section">
+            <label htmlFor="confirmPassword" className="text-xl">
+              Confirm Password:
+            </label>
+            <div className="input-icon">
+              <FaLock className="signup-icon" />
+              <input
+                className="input"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••••"
+                required
+                type="password"
+              ></input>
+            </div>
+            {errors.confirmPassword && <p className="error-text">{errors.confirmPassword}</p>}
+          </div>
+
           <motion.button
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.05 }}
@@ -192,6 +218,17 @@ function SignUpPage() {
             !
           </p>
         </form>
+        {errors.length > 0 && (
+          <div className="error-messages">
+            <ul>
+              {errors.map((error, index) => (
+                <li key={index} className="error-text">
+                  {error}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </>
   );
