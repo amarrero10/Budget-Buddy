@@ -382,10 +382,10 @@ function BudgetDetail() {
           ) : null}
           <button
             disabled={currentMonthPaidBills?.length < 1}
-            className="nav-btn bill-btn reset-budget-btn"
+            className="nav-btn bill-btn reset-budget-btn recur-btn"
             onClick={openResetModal}
           >
-            Reset recurring Bills
+            Reset Recurring Bills
           </button>
         </div>
       </div>

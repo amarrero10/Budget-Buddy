@@ -297,7 +297,7 @@ function Bills() {
   }, [bill]);
 
   useEffect(() => {
-    if (bill) {
+    if (bill && bill.datePaid) {
       const billDate = new Date(bill.datePaid);
       const timezoneOffsetMinutes = billDate.getTimezoneOffset();
 
@@ -308,7 +308,7 @@ function Bills() {
         billName: bill.billName || "",
         billAmount: bill.billAmount || "",
         budgetId: bill.budgetId || "",
-        datePaid: billDate.toISOString().split("T")[0] || "", // Ensure ISO format
+        datePaid: billDate?.toISOString().split("T")[0] || "", // Ensure ISO format
       });
     }
   }, [bill]);
