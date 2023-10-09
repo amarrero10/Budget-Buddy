@@ -137,6 +137,8 @@ function Bills() {
     billName: "",
     billAmount: "",
     budgetId: "",
+    dueDate: "",
+    datePaid: "",
   });
 
   const [addFormData, setAddFormData] = useState({
@@ -242,11 +244,18 @@ function Bills() {
   };
   const oneTimeHandleInput = (e) => {
     const { name, value } = e.target;
-
-    setOneTimeBillData({
-      ...oneTimeBillData,
-      [name]: value,
-    });
+    if (name === "dueDate") {
+      setOneTimeBillData({
+        ...oneTimeBillData,
+        [name]: value,
+        datePaid: value,
+      });
+    } else {
+      setOneTimeBillData({
+        ...oneTimeBillData,
+        [name]: value,
+      });
+    }
   };
 
   const addHandleInput = (e) => {
@@ -289,10 +298,17 @@ function Bills() {
 
   useEffect(() => {
     if (bill) {
+      const billDate = new Date(bill.datePaid);
+      const timezoneOffsetMinutes = billDate.getTimezoneOffset();
+
+      // Adjust the date by subtracting the offset in minutes
+      billDate.setMinutes(billDate.getMinutes() + timezoneOffsetMinutes);
+
       setOneTimeBillData({
         billName: bill.billName || "",
         billAmount: bill.billAmount || "",
         budgetId: bill.budgetId || "",
+        datePaid: billDate.toISOString().split("T")[0] || "", // Ensure ISO format
       });
     }
   }, [bill]);
@@ -476,6 +492,10 @@ function Bills() {
     if (oneTimeBillData.budgetId === "" || oneTimeBillData.budgetId === "--") {
       console.log("BUDGET ID", oneTimeBillData.budgetId);
       newErrors.budgetId = "Budget is required";
+    }
+
+    if (oneTimeBillData.dueDate === "" || oneTimeBillData.dueDate < 1) {
+      newErrors.dueDate = "Date paid is required";
     }
 
     setEditOneTimeErrors(newErrors);
@@ -778,6 +798,21 @@ function Bills() {
                 {editOneTimeErrors.budgetId && (
                   <p className="error-text">{editOneTimeErrors.budgetId}</p>
                 )}
+              </div>
+              <div className=" input-div">
+                <label>Date Paid:</label>
+                <input
+                  type="date"
+                  onChange={oneTimeHandleInput}
+                  name="dueDate"
+                  min={firstDayOfMonth}
+                  max={lastDayOfMonth}
+                  value={oneTimeBillData.datePaid}
+                ></input>
+                {editOneTimeErrors.dueDate && (
+                  <p className="error-text">{editOneTimeErrors.dueDate}</p>
+                )}
+                <input type="hidden" name="paid" value={(addFormData.paid = true)} />
               </div>
               <button type="submit">Save Changes</button>
               <button onClick={() => setEditOneTimeBillModal(false)}>Cancel</button>

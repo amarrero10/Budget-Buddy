@@ -42,6 +42,7 @@ router.put("/update-bill/:id", upload.none(), async (req, res) => {
     billingFrequency,
     billAmount,
     budgetId,
+    datePaid,
   } = req.body;
 
   const bill = await Bill.findByPk(id);
@@ -52,6 +53,7 @@ router.put("/update-bill/:id", upload.none(), async (req, res) => {
   bill.billingFrequency = billingFrequency;
   bill.billAmount = billAmount;
   bill.budgetId = budgetId;
+  bill.datePaid = datePaid;
 
   await bill.save();
 
