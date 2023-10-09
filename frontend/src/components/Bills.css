@@ -147,7 +147,7 @@ input[type="date"] {
 }
 
 .bills-btns {
-  width: 400px;
+  width: 600px;
   display: flex;
   justify-content: space-between;
 }
@@ -167,4 +167,11 @@ input[type="date"] {
 .optional {
   font-size: 12px;
   margin-top: -10px;
+}
+.recur-btn {
+  width: 300px;
+}
+
+.delete-bill {
+  text-align: center;
 }

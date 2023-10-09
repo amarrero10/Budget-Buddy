@@ -103,6 +103,8 @@ function Bills() {
   const [errors, setErrors] = useState({});
   const [editErrors, setEditErrors] = useState({});
   const [editOneTimeErrors, setEditOneTimeErrors] = useState({});
+  const [deleteBillModal, setDeleteBillModal] = useState(false);
+  const [currentBillId, setCurrentBillId] = useState(null);
 
   const handleRadioChange = (e) => {
     const value = e.target.value === "true"; // Convert the string to a boolean
@@ -299,6 +301,11 @@ function Bills() {
 
   const handleDelete = (billId) => {
     dispatch(billsActions.deleteABill(billId));
+    setDeleteBillModal(false);
+  };
+
+  const handleDeleteBillModal = () => {
+    setDeleteBillModal(true);
   };
 
   const handleMarkAsPaid = (billId, newPaidStatus) => {
@@ -551,7 +558,13 @@ function Bills() {
                         <BsPencilSquare onClick={() => handleEdit(bill.id)} className="bill-icon" />
                       </td>
                       <td className="delete">
-                        <BsTrash3 onClick={() => handleDelete(bill.id)} className="bill-delete" />
+                        <BsTrash3
+                          onClick={() => {
+                            setCurrentBillId(bill.id);
+                            handleDeleteBillModal();
+                          }}
+                          className="bill-delete"
+                        />
                       </td>
                       <td className="edit">
                         <a href={bill.paymentLink} target="_blank" rel="noreferrer">
@@ -589,7 +602,13 @@ function Bills() {
                           />
                         </td>
                         <td className="delete">
-                          <BsTrash3 onClick={() => handleDelete(bill.id)} className="bill-delete" />
+                          <BsTrash3
+                            onClick={() => {
+                              setCurrentBillId(bill.id);
+                              handleDeleteBillModal();
+                            }}
+                            className="bill-delete"
+                          />
                         </td>
                       </tr>
                     );
@@ -601,8 +620,8 @@ function Bills() {
               <button className="nav-btn bill-btn" onClick={openAddModal}>
                 Add A Bill
               </button>
-              <button className="nav-btn bill-btn" onClick={openResetModal}>
-                Reset Monthly Bills
+              <button className="nav-btn bill-btn recur-btn" onClick={openResetModal}>
+                Reset Recurring Bills
               </button>
             </div>
           </div>
@@ -906,7 +925,7 @@ function Bills() {
         <div className="modal">
           <div className="modal-content">
             <form onSubmit={handleResetBills}>
-              <p>Are you sure you want to reset your bills?</p>
+              <p>Are you sure you want to reset your recurring bills?</p>
               <div className="reset-btns">
                 <button onClick={() => setResetModal(false)}>No, Cancel</button>
                 <button type="submit">Yes, reset bills</button>
@@ -914,6 +933,37 @@ function Bills() {
             </form>
           </div>
         </div>
+      )}
+
+      {deleteBillModal && (
+        <>
+          <div className="modal">
+            <div className="modal-content">
+              <form>
+                <input type="hidden" name="budgetId" value={currentBillId} />
+                <p className=" delete-bill">Are you sure you want to delete this bill?</p>
+                <div className="modal-btns">
+                  <button
+                    onClick={(e) => {
+                      setDeleteBillModal(false);
+                      e.preventDefault();
+                    }}
+                  >
+                    No, Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      setDeleteBillModal(false);
+                      handleDelete(currentBillId); // Pass the callback function
+                    }}
+                  >
+                    Yes, Delete
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </>
       )}
     </>
   );
