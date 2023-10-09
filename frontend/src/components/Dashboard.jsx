@@ -240,7 +240,7 @@ function Dashboard() {
                 </div>
               </Link>
             )}
-            {budgets && budgets.length > 1 ? (
+            {budgets && budgets.length >= 1 ? (
               <Link to="/budgets" className="dashboard-card">
                 <div className="dashboard-card-two">
                   <h2>Budgets</h2>
@@ -261,7 +261,7 @@ function Dashboard() {
               </Link>
             )}
 
-            {savings && savings.length > 1 ? (
+            {savings && savings.length >= 1 ? (
               <Link to="/savings" className="dashboard-card">
                 <div className="dashboard-card-three">
                   <h2>Savings</h2>
