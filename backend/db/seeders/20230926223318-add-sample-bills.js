@@ -42,7 +42,7 @@ module.exports = {
           billingStartMonth: "September",
           billingFrequency: "monthly",
           billAmount: 80.13,
-          paid: true,
+          paid: false,
           budgetId: 1,
           datePaid: new Date("2023-09-07T12:00:00Z"),
         },

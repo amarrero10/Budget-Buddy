@@ -51,6 +51,10 @@ function BudgetDetail() {
       }
     }
 
+    if (addFormData.isRecurring === "") {
+      errors.isRecurring = " Selection is required";
+    }
+
     setFormErrors(errors);
 
     return Object.keys(errors).length === 0;
@@ -234,11 +238,14 @@ function BudgetDetail() {
                   />{" "}
                   No
                 </div>
+                {formErrors.isRecurring && (
+                  <div className="error-text">{formErrors.isRecurring}</div>
+                )}
               </div>
               {isRecurring && (
                 <>
                   <div className="budget-input">
-                    <label htmlFor="payment">Payment Link</label>
+                    <label htmlFor="payment">*Payment Link</label>
                     <input
                       className="budget-in"
                       onChange={addHandleInput}
@@ -246,6 +253,7 @@ function BudgetDetail() {
                       name="paymentLink"
                       value={addFormData.paymentLink}
                     />
+                    <p className="option">*optional</p>
                   </div>
                   <div className="budget-input">
                     <label>Date Paid:</label>

@@ -27,11 +27,11 @@ module.exports = {
           type: Sequelize.INTEGER,
         },
         budgetAmount: {
-          type: Sequelize.INTEGER,
+          type: Sequelize.FLOAT,
           allowNull: false,
         },
         budgetLeft: {
-          type: Sequelize.INTEGER,
+          type: Sequelize.FLOAT,
           allowNull: false,
         },
         createdAt: {

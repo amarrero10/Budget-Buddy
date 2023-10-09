@@ -21,9 +21,18 @@ module.exports = (sequelize, DataTypes) => {
     {
       userId: { type: DataTypes.INTEGER, allowNull: false },
       budgetName: { type: DataTypes.STRING, allowNull: false },
-      budgetAmount: { type: DataTypes.INTEGER, allowNull: false },
+      budgetAmount: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        validate: {
+          isFloat: {
+            args: [2], // Limit to 2 decimal places
+            msg: "Bill amount must have exactly 2 decimal places.",
+          },
+        },
+      },
       budgetLeft: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         allowNull: false,
         validate: {
           isLessThanOrEqual: function (value) {

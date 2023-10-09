@@ -103,7 +103,7 @@
   box-shadow: -1px 5px 29px 1px rgba(0, 0, 0, 0.28);
   border-radius: 7px;
   padding: 20px;
-  max-width: 500px; /* Adjust the width as needed */
+  width: 400px; /* Adjust the width as needed */
 }
 
 /* Form Styles */
@@ -156,4 +156,15 @@ input[type="date"] {
   width: 300px;
   display: flex;
   justify-content: space-around;
+  margin: auto;
+}
+
+.input-div {
+  display: flex;
+  flex-direction: column;
+}
+
+.optional {
+  font-size: 12px;
+  margin-top: -10px;
 }

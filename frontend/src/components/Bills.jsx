@@ -101,6 +101,8 @@ function Bills() {
   const [selectedBill, setSelectedBill] = useState(null);
   const [isRecurring, setIsRecurring] = useState(null);
   const [errors, setErrors] = useState({});
+  const [editErrors, setEditErrors] = useState({});
+  const [editOneTimeErrors, setEditOneTimeErrors] = useState({});
 
   const handleRadioChange = (e) => {
     const value = e.target.value === "true"; // Convert the string to a boolean
@@ -166,16 +168,22 @@ function Bills() {
 
   const handleEditSubmit = (e) => {
     e.preventDefault();
+    const isValid = validateEditForm();
 
-    setEditOpenModal(false);
+    if (isValid) {
+      setEditOpenModal(false);
 
-    dispatch(billsActions.editABill(selectedBill, formData));
+      dispatch(billsActions.editABill(selectedBill, formData));
+    }
   };
 
   const handleOneTimeEditSubmit = (e) => {
     e.preventDefault();
-    setEditOneTimeBillModal(false);
-    dispatch(billsActions.editABill(selectedBill, oneTimeBillData));
+    const isValid = validateOneTimeEditForm();
+    if (isValid) {
+      setEditOneTimeBillModal(false);
+      dispatch(billsActions.editABill(selectedBill, oneTimeBillData));
+    }
   };
 
   const handleAddBillSubmit = (e) => {
@@ -209,6 +217,7 @@ function Bills() {
         budgetId: "",
         isRecurring: "",
       });
+      setIsRecurring(null);
     }
   };
 
@@ -392,8 +401,79 @@ function Bills() {
       newErrors.budgetId = "Budget is required";
     }
 
+    if (addFormData.isRecurring === "") {
+      newErrors.isRecurring = " Selection is required";
+    }
+
     // Set the errors state
     setErrors(newErrors);
+
+    // Return true if there are no errors, indicating the form is valid
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateEditForm = () => {
+    const newErrors = {};
+
+    // Perform your validation checks here
+    if (!formData.billName) {
+      newErrors.billName = "Name is required";
+    }
+
+    if ((formData.isRecurring && formData.billingDay === "") || formData.billingDay === "--") {
+      newErrors.billingDay = "Billing Day is required for recurring bills";
+    }
+
+    if (!formData.isRecurring && formData.dueDate === "") {
+      newErrors.dueDate = "Date Paid is required";
+    }
+
+    if (!formData.billAmount) {
+      newErrors.billAmount = "Amount is required";
+    } else if (formData.billAmount <= 0) {
+      newErrors.billAmount = "Amount must be greater than 0";
+    }
+
+    if (formData.budgetId === "" || formData.budgetId === "--") {
+      console.log("BUDGET ID", formData.budgetId);
+      newErrors.budgetId = "Budget is required";
+    }
+
+    if (formData.isRecurring === "") {
+      newErrors.isRecurring = " Selection is required";
+    }
+
+    // Set the errors state
+    setEditErrors(newErrors);
+
+    console.log(newErrors);
+
+    // Return true if there are no errors, indicating the form is valid
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateOneTimeEditForm = () => {
+    const newErrors = {};
+
+    // Perform your validation checks here
+    if (!oneTimeBillData.billName) {
+      newErrors.billName = "Name is required";
+    }
+
+    if (!oneTimeBillData.billAmount) {
+      newErrors.billAmount = "Amount is required";
+    } else if (oneTimeBillData.billAmount <= 0) {
+      newErrors.billAmount = "Amount must be greater than 0";
+    }
+
+    if (oneTimeBillData.budgetId === "" || oneTimeBillData.budgetId === "--") {
+      console.log("BUDGET ID", oneTimeBillData.budgetId);
+      newErrors.budgetId = "Budget is required";
+    }
+
+    setEditOneTimeErrors(newErrors);
+
+    console.log(newErrors);
 
     // Return true if there are no errors, indicating the form is valid
     return Object.keys(newErrors).length === 0;
@@ -411,8 +491,15 @@ function Bills() {
       budgetId: "",
       isRecurring: "",
     });
+    setIsRecurring(null);
     setErrors({});
+
     setAddOpenModal(false);
+  };
+
+  const handleCancelClick = () => {
+    setEditOpenModal(false);
+    setEditErrors({});
   };
 
   return (
@@ -493,7 +580,7 @@ function Bills() {
                     return (
                       <tr key={bill.id}>
                         <td>{bill.billName}</td>
-                        <td>${bill.billAmount.toFixed(2)}</td>
+                        <td>${Number(bill?.billAmount).toFixed(2)}</td>
                         <td>{bill?.datePaid.slice(0, 10)}</td>
                         <td className="edit">
                           <BsPencilSquare
@@ -542,8 +629,8 @@ function Bills() {
           <div className="modal-content">
             <form onSubmit={handleEditSubmit}>
               <input type="hidden" name="billId" value={selectedBill} />
-              <div>
-                <label htmlFor="name">Name</label>
+              <div className="input-div">
+                <label htmlFor="name">Name:</label>
                 <input
                   type="text"
                   onChange={handleInput}
@@ -551,9 +638,10 @@ function Bills() {
                   name="billName"
                   value={formData.billName}
                 ></input>
+                {editErrors.billName && <p className="error-text">{editErrors.billName}</p>}
               </div>
-              <div>
-                <label htmlFor="payment">Payment Link</label>
+              <div className=" input-div">
+                <label htmlFor="payment">Payment Link:</label>
                 <input
                   onChange={handleInput}
                   id="payment"
@@ -563,7 +651,7 @@ function Bills() {
               </div>
               <div>
                 <p>Change Date It Falls On:</p>
-                <div>
+                <div className="input-div">
                   <label>Date:</label>
                   <select onChange={handleInput} name="billingDay" value={formData.billingDay}>
                     <option>--</option>
@@ -571,6 +659,7 @@ function Bills() {
                       <option key={idx}>{date}</option>
                     ))}
                   </select>
+                  {editErrors.billingDay && <p className="error-text">{editErrors.billingDay}</p>}
                 </div>
               </div>
               <input
@@ -587,19 +676,21 @@ function Bills() {
                 name="billingDay"
                 value={(formData.billingFrequency = "every month")}
               />
-              <div>
-                <label htmlFor="billAMount">Amount</label>
+              <div className="input-div">
+                <label htmlFor="billAMount">Amount:</label>
                 <input
                   type="number"
+                  step="any"
                   onChange={handleInput}
                   id="billAmount"
                   name="billAmount"
                   value={formData.billAmount}
                   placeholder="200"
                 ></input>
+                {editErrors.billAmount && <p className="error-text">{editErrors.billAmount}</p>}
               </div>
-              <div>
-                <label>Budget</label>
+              <div className="input-div">
+                <label>Budget:</label>
                 <select onChange={handleInput} name="budgetId" value={formData.budgetId}>
                   <option>--</option>
                   {budgets?.map((budget, idx) => (
@@ -608,9 +699,10 @@ function Bills() {
                     </option>
                   ))}
                 </select>
+                {editErrors.budgetId && <p className="error-text">{editErrors.budgetId}</p>}
               </div>
               <button type="submit">Save Changes</button>
-              <button onClick={() => setEditOpenModal(false)}>Cancel</button>
+              <button onClick={handleCancelClick}>Cancel</button>
             </form>
           </div>
         </div>
@@ -621,8 +713,8 @@ function Bills() {
           <div className="modal-content">
             <form onSubmit={handleOneTimeEditSubmit}>
               <input type="hidden" name="billId" value={selectedBill} />
-              <div>
-                <label htmlFor="name">Name</label>
+              <div className="input-div">
+                <label htmlFor="name">Name:</label>
                 <input
                   type="text"
                   onChange={oneTimeHandleInput}
@@ -630,21 +722,28 @@ function Bills() {
                   name="billName"
                   value={oneTimeBillData.billName}
                 ></input>
+                {editOneTimeErrors.billName && (
+                  <p className="error-text">{editOneTimeErrors.billName}</p>
+                )}
               </div>
 
-              <div>
-                <label htmlFor="billAMount">Amount</label>
+              <div className="input-div">
+                <label htmlFor="billAMount">Amount:</label>
                 <input
                   type="number"
+                  step="any"
                   onChange={oneTimeHandleInput}
                   id="billAmount"
                   name="billAmount"
                   value={oneTimeBillData.billAmount}
                   placeholder="200"
                 ></input>
+                {editOneTimeErrors.billAmount && (
+                  <p className="error-text">{editOneTimeErrors.billAmount}</p>
+                )}
               </div>
-              <div>
-                <label>Budget</label>
+              <div className="input-div">
+                <label>Budget:</label>
                 <select
                   onChange={oneTimeHandleInput}
                   name="budgetId"
@@ -657,6 +756,9 @@ function Bills() {
                     </option>
                   ))}
                 </select>
+                {editOneTimeErrors.budgetId && (
+                  <p className="error-text">{editOneTimeErrors.budgetId}</p>
+                )}
               </div>
               <button type="submit">Save Changes</button>
               <button onClick={() => setEditOneTimeBillModal(false)}>Cancel</button>
@@ -670,8 +772,8 @@ function Bills() {
           <div className="modal">
             <div className="modal-content">
               <form onSubmit={handleAddBillSubmit}>
-                <div>
-                  <label htmlFor="name">Name</label>
+                <div className=" input-div">
+                  <label htmlFor="name">Name:</label>
                   <input
                     type="text"
                     onChange={addHandleInput}
@@ -699,24 +801,28 @@ function Bills() {
                     onChange={handleRadioChange}
                   />{" "}
                   No
+                  <div>
+                    {errors.isRecurring && <p className="error-text">{errors.isRecurring}</p>}
+                  </div>
                 </div>
                 {isRecurring && (
-                  <div>
-                    <label htmlFor="payment">Payment Link</label>
+                  <div className=" input-div">
+                    <label htmlFor="payment">*Payment Link:</label>
                     <input
                       onChange={addHandleInput}
                       id="payment"
                       name="paymentLink"
                       value={addFormData.paymentLink}
                     ></input>
+                    <p className="optional">*optional</p>
                   </div>
                 )}
 
                 <div>
                   {isRecurring ? (
                     <>
-                      <div>
-                        <p>Next Due Date:</p>
+                      <p>Next Due Date:</p>
+                      <div className="input-div">
                         <label>Date:</label>
                         <select
                           onChange={addHandleInput}
@@ -747,24 +853,27 @@ function Bills() {
                     </>
                   ) : (
                     <>
-                      <label>Date Paid:</label>
-                      <input
-                        type="date"
-                        onChange={addHandleInput}
-                        name="dueDate"
-                        min={firstDayOfMonth}
-                        max={lastDayOfMonth}
-                        value={addFormData.dueDate}
-                      ></input>
-                      {errors.dueDate && <p className="error-text">{errors.dueDate}</p>}
-                      <input type="hidden" name="paid" value={(addFormData.paid = true)} />
+                      <div className=" input-div">
+                        <label>Date Paid:</label>
+                        <input
+                          type="date"
+                          onChange={addHandleInput}
+                          name="dueDate"
+                          min={firstDayOfMonth}
+                          max={lastDayOfMonth}
+                          value={addFormData.dueDate}
+                        ></input>
+                        {errors.dueDate && <p className="error-text">{errors.dueDate}</p>}
+                        <input type="hidden" name="paid" value={(addFormData.paid = true)} />
+                      </div>
                     </>
                   )}
                 </div>
-                <div>
-                  <label htmlFor="billAmount">Amount</label>
+                <div className=" input-div">
+                  <label htmlFor="billAmount">Amount:</label>
                   <input
                     type="number"
+                    step="any"
                     onChange={addHandleInput}
                     id="billAmount"
                     name="billAmount"
@@ -773,8 +882,8 @@ function Bills() {
                   ></input>
                   {errors.billAmount && <p className="error-text">{errors.billAmount}</p>}
                 </div>
-                <div>
-                  <label>Budget</label>
+                <div className="input-div">
+                  <label>Budget:</label>
                   <select onChange={addHandleInput} name="budgetId" value={addFormData.budgetId}>
                     <option>--</option>
                     {budgets?.map((budget, idx) => (

@@ -39,3 +39,8 @@
   margin-top: 10px;
   font-size: 1.2rem;
 }
+
+.option {
+  margin-top: -1px;
+  font-size: 13px;
+}

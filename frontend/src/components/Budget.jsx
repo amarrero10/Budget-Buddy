@@ -30,6 +30,11 @@ function Budget() {
     budgetAmount: "",
   });
 
+  const [editFormErrors, setEditFormErrors] = useState({
+    budgetName: "",
+    budgetAmount: "",
+  });
+
   const [selectedBudgetId, setSelectedBudgetId] = useState(null);
 
   const handleCreateBudgetInput = (e) => {
@@ -124,6 +129,29 @@ function Budget() {
     return valid;
   };
 
+  const validateEditForm = () => {
+    let valid = true;
+    const errors = {};
+
+    // Validate budgetName
+    if (!editFormData.budgetName) {
+      errors.budgetName = "Budget Name is required.";
+      valid = false;
+    }
+
+    // Validate budgetAmount
+    if (!editFormData.budgetAmount) {
+      errors.budgetAmount = "Budget Amount is required.";
+      valid = false;
+    } else if (isNaN(editFormData.budgetAmount) || parseFloat(editFormData.budgetAmount) <= 0) {
+      errors.budgetAmount = "Budget Amount must be a positive number.";
+      valid = false;
+    }
+
+    setEditFormErrors(errors);
+    return valid;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
@@ -172,18 +200,20 @@ function Budget() {
     e.preventDefault();
 
     // Calculate budgetLeft based on the initial budgetAmount value
-    const updatedEditFormData = {
-      ...editFormData,
-      budgetLeft: editFormData.budgetAmount,
-    };
+    if (validateEditForm()) {
+      const updatedEditFormData = {
+        ...editFormData,
+        budgetLeft: editFormData.budgetAmount,
+      };
 
-    dispatch(budgetActions.editABudget(currentBudgetId, updatedEditFormData));
-    setEditFormData({
-      budgetName: "",
-      budgetAmount: "",
-      budgetLeft: "", // Reset budgetLeft
-    });
-    setEditBudgetModal(false);
+      dispatch(budgetActions.editABudget(currentBudgetId, updatedEditFormData));
+      setEditFormData({
+        budgetName: "",
+        budgetAmount: "",
+        budgetLeft: "", // Reset budgetLeft
+      });
+      setEditBudgetModal(false);
+    }
   };
 
   const handleDeleteBudget = (currentBudgetId) => {
@@ -282,7 +312,7 @@ function Budget() {
           <div className="modal">
             <div className="modal-content">
               <form onSubmit={handleEditBudgetSubmit}>
-                <div>
+                <div className="input-div">
                   <input type="hidden" name="budgetId" value={currentBudgetId} />
                   <label htmlFor="change-name">Change Name:</label>
                   <input
@@ -292,8 +322,11 @@ function Budget() {
                     type="text"
                     onChange={handleEditBudgetInput}
                   ></input>
+                  {editFormErrors.budgetName && (
+                    <p className="error-text">{editFormErrors.budgetName}</p>
+                  )}
                 </div>
-                <div>
+                <div className="input-div">
                   <label htmlFor="change-amount">Change Amount:</label>
                   <input
                     id="change-amount"
@@ -302,10 +335,17 @@ function Budget() {
                     type="number"
                     onChange={handleEditBudgetInput}
                   ></input>
+                  {editFormErrors.budgetAmount && (
+                    <p className="error-text">{editFormErrors.budgetAmount}</p>
+                  )}
                 </div>
                 <button
                   onClick={(e) => {
                     setEditBudgetModal(false);
+                    setEditFormErrors({
+                      budgetName: "",
+                      budgetAmount: "",
+                    });
                     e.preventDefault();
                   }}
                 >

@@ -112,8 +112,13 @@ function Dashboard() {
     totalBudget += budget.budgetAmount;
   }
   for (let i = 0; i < bills?.length; i++) {
+    let month = new Date();
+    month = month.getMonth() + 1;
+
     const bill = bills[i];
-    if (bill.Budget && bill.paid) totalBudgetUsed += bill.billAmount;
+    let billMonth = new Date(bill.datePaid);
+    billMonth = billMonth.getMonth() + 1;
+    if (bill.Budget && bill.paid && billMonth === month) totalBudgetUsed += bill.billAmount;
   }
   for (let i = 0; i < savings?.length; i++) {
     const saving = savings[i];
@@ -180,8 +185,6 @@ function Dashboard() {
       item.dueDate = item.dueDate.toLocaleDateString();
     }
   });
-
-  console.log("ALL DATA", allData);
 
   const data = {
     labels:
