@@ -266,7 +266,7 @@ function Dashboard() {
                 <div className="dashboard-card-three">
                   <h2>Savings</h2>
                   <FaSackDollar className="icon" />
-                  {/* <p className="progress-tracker">Combined Progress Made:</p>
+                  <p className="progress-tracker">Combined Progress Made:</p>
                   <div className="progress-bar">
                     <div className="progress" style={{ width: `${totalSavings}%` }}>
                       {totalSavings}%
@@ -274,8 +274,7 @@ function Dashboard() {
                   </div>
 
                   <p className="savings">{savings ? `Combined Saved: $${totalSavings}` : ""}</p>
-                  <p className="goal">{savings ? `Combined Target Amount: $${savingsGoal}` : ""}</p> */}
-                  <p>Coming Soon</p>
+                  <p className="goal">{savings ? `Combined Target Amount: $${savingsGoal}` : ""}</p>
                 </div>
               </Link>
             ) : (

@@ -3,6 +3,7 @@ const sessionRouter = require("./session.js");
 const usersRouter = require("./users.js");
 const billRouter = require("./bills.js");
 const budgetRouter = require("./budgets.js");
+const savingsRouter = require("./savings.js");
 const { restoreUser } = require("../../utils/auth.js");
 
 router.use(restoreUser);
@@ -10,6 +11,7 @@ router.use("/session", sessionRouter);
 router.use("/users", usersRouter);
 router.use("/bills", billRouter);
 router.use("/budgets", budgetRouter);
+router.use("/savings", savingsRouter);
 
 const { setTokenCookie } = require("../../utils/auth.js");
 const { User } = require("../../db/models");

@@ -1,10 +1,47 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Menu from "./Menu";
 import "./Savings.css";
+import * as savingsActions from "../store/savings";
+import { GoLog } from "react-icons/go";
 
 function Savings() {
+  const dispatch = useDispatch();
   const savings = useSelector((state) => state.savings?.savings);
+  const user = useSelector((state) => state.session.user.user);
+  const [createSavingsModal, setCreateSavingsModal] = useState(false);
+  const [createSavingsForm, setCreateSavingsForm] = useState({
+    goalName: "",
+    targetAmount: "",
+    currentAmount: "",
+  });
+
+  const openCreateSavingsModal = (e) => {
+    e.preventDefault();
+    setCreateSavingsModal(!createSavingsModal);
+  };
+
+  const handleCloseCreateModal = (e) => {
+    e.preventDefault();
+    setCreateSavingsModal(false);
+  };
+
+  const handleCreateSavingsInput = (e) => {
+    const { name, value } = e.target;
+
+    setCreateSavingsForm({
+      ...createSavingsForm,
+      [name]: value,
+    });
+  };
+
+  const handleCreateSavings = (e) => {
+    e.preventDefault();
+    console.log(createSavingsForm);
+    dispatch(savingsActions.addSavings(createSavingsForm));
+  };
+
+  console.log(createSavingsModal);
 
   console.log("SAVINGS", savings);
   return (
@@ -14,7 +51,7 @@ function Savings() {
           <Menu />
         </div>
         <div>
-          <p>Welcome to your savings page</p>
+          <p>Welcome to your savings page, {user.username}!</p>
           <div className="savings-card-container">
             {savings.map((saving) => {
               return (
@@ -40,9 +77,52 @@ function Savings() {
               );
             })}
           </div>
-          <button className="nav-btn add-saving">Add a savings goal</button>
+          <button className="nav-btn add-saving" onClick={openCreateSavingsModal}>
+            Add a savings goal
+          </button>
         </div>
       </div>
+
+      {createSavingsModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <form onSubmit={handleCreateSavings}>
+              <div className=" budget-input">
+                <label htmlFor="savings-name">Savings Goal Name</label>
+                <input
+                  className="budget-in"
+                  id="savings-name"
+                  name="goalName"
+                  onChange={handleCreateSavingsInput}
+                  value={createSavingsForm.goalName}
+                ></input>
+              </div>
+              <div className=" budget-input">
+                <label htmlFor="savings-target">Savings Target Amount</label>
+                <input
+                  className="budget-in"
+                  id="savings-target"
+                  name="targetAmount"
+                  onChange={handleCreateSavingsInput}
+                  value={createSavingsForm.targetAmount}
+                ></input>
+              </div>
+              <div className=" budget-input">
+                <label htmlFor="savings-current">Current Amount</label>
+                <input
+                  className="budget-in"
+                  id="savings-current"
+                  name="currentAmount"
+                  onChange={handleCreateSavingsInput}
+                  value={createSavingsForm.currentAmount}
+                ></input>
+              </div>
+              <button onClick={handleCloseCreateModal}>Cancel</button>
+              <button type="submit">Create Savings</button>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }
