@@ -3,3 +3,46 @@
   height: 100vh;
   width: 100%;
 }
+
+.savings-card-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 80px;
+}
+
+.savings-card {
+  width: 400px;
+  box-shadow: -1px 5px 29px 1px rgba(0, 0, 0, 0.28);
+  border-radius: 10px;
+}
+
+.savings-info-and-btns {
+  display: flex;
+  justify-content: space-between;
+}
+
+.savings-btns {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px 0;
+  padding-right: 5px;
+}
+
+.savings-info {
+  padding-left: 10px;
+}
+
+.saving-name {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.saving-amounts {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.add-saving {
+  margin-top: 40px;
+}
