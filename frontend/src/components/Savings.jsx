@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Menu from "./Menu";
 import "./Savings.css";
@@ -26,6 +26,10 @@ function Savings() {
     setCreateSavingsModal(false);
   };
 
+  useEffect(() => {
+    dispatch(savingsActions.fetchSavings());
+  }, [dispatch]);
+
   const handleCreateSavingsInput = (e) => {
     const { name, value } = e.target;
 
@@ -39,6 +43,12 @@ function Savings() {
     e.preventDefault();
     console.log(createSavingsForm);
     dispatch(savingsActions.addSavings(createSavingsForm));
+    setCreateSavingsModal(false);
+    setCreateSavingsForm({
+      goalName: "",
+      targetAmount: "",
+      currentAmount: "",
+    });
   };
 
   console.log(createSavingsModal);
@@ -53,8 +63,8 @@ function Savings() {
         <div>
           <p>Welcome to your savings page, {user.username}!</p>
           <div className="savings-card-container">
-            {savings.map((saving) => {
-              return (
+            {savings ? (
+              savings.map((saving) => (
                 <div className=" savings-card">
                   <div className="savings-info-and-btns">
                     <div className="savings-info">
@@ -74,8 +84,10 @@ function Savings() {
                   </div>
                   <p>PROGRESS BAR</p>
                 </div>
-              );
-            })}
+              ))
+            ) : (
+              <p>Loading savings data...</p>
+            )}
           </div>
           <button className="nav-btn add-saving" onClick={openCreateSavingsModal}>
             Add a savings goal

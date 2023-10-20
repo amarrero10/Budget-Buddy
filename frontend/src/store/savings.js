@@ -23,21 +23,24 @@ export const fetchSavings = () => async (dispatch) => {
   }
 };
 
-export const addSavings = (formData) => async (dispatch) => {
+export const addSavings = (formData) => async (dispatch, getState) => {
   const res = await csrfFetch("/api/savings/", {
     method: "POST",
     headers: {
-      "Content=Type": "application/json",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(formData),
   });
 
   const data = await res.json();
 
-  console.log(data);
+  // Fetch the existing savings data from Redux store state
+  const existingSavings = getState().savings.savings;
 
-  dispatch(setSavings(data));
-  dispatch(fetchSavings());
+  // Combine the new savings entry with the existing data
+  const updatedSavings = [...existingSavings, data.savings];
+
+  dispatch(setSavings(updatedSavings));
 };
 
 const initialState = { savings: null };
@@ -52,7 +55,7 @@ const savingsReducer = (state = initialState, action) => {
     case ADD_SAVINGS:
       return {
         ...state,
-        savings: action.payload,
+        savings: [...state.savings, action.payload],
       };
     case REMOVE_USER:
       return {
