@@ -7,15 +7,19 @@ import * as savingsActions from "../store/savings";
 function Savings() {
   const dispatch = useDispatch();
   const savings = useSelector((state) => state.savings?.savings);
+  const [saving, setSaving] = useState("");
   const user = useSelector((state) => state.session.user.user);
   const [createSavingsModal, setCreateSavingsModal] = useState(false);
   const [deleteSavingsModal, setDeleteSavingsModal] = useState(false);
+  const [editSavingsModal, setEditSavingsModal] = useState(false);
   const [savingsId, setSavingsId] = useState("");
+
   const [createSavingsForm, setCreateSavingsForm] = useState({
     goalName: "",
     targetAmount: "",
     currentAmount: "",
   });
+  const [editSavingsForm, setEditSavingsForm] = useState({});
 
   const openCreateSavingsModal = (e) => {
     e.preventDefault();
@@ -66,6 +70,43 @@ function Savings() {
     setDeleteSavingsModal(false);
   };
 
+  const handleEditSavingsModal = async (savingsId) => {
+    setEditSavingsModal(true);
+    setSavingsId(savingsId);
+    const res = await fetch(`/api/savings/${savingsId}`);
+    const data = await res.json();
+    console.log("TEST", data.savings.goalName);
+    setEditSavingsForm({
+      goalName: data.savings.goalName || "",
+      targetAmount: data.savings.targetAmount || "",
+      currentAmount: data.savings.currentAmount >= 0 ? Number(data.savings.currentAmount) : "",
+    });
+    setSaving(data);
+  };
+
+  console.log(editSavingsForm);
+
+  const handleEditSavings = (e) => {
+    e.preventDefault();
+    dispatch(savingsActions.editASavings(savingsId, editSavingsForm));
+    setEditSavingsModal(false);
+  };
+
+  const handleCloseEditModal = () => {
+    setEditSavingsModal(false);
+  };
+
+  const handleEditSavingsInput = (e) => {
+    const { name, value } = e.target;
+
+    setEditSavingsForm({
+      ...editSavingsForm,
+      [name]: value,
+    });
+  };
+
+  console.log("EDIT FORM INFO", editSavingsForm.goalName);
+
   return (
     <>
       <div className="savings-page">
@@ -89,7 +130,9 @@ function Savings() {
                       </p>
                     </div>
                     <div className="savings-btns">
-                      <button className="nav-btn">Edit</button>
+                      <button className="nav-btn" onClick={() => handleEditSavingsModal(saving.id)}>
+                        Edit
+                      </button>
                       <button
                         className="nav-btn"
                         onClick={() => handleDeleteSavingsModal(saving.id)}
@@ -159,6 +202,47 @@ function Savings() {
             <p>Are you sure you want to delete this goal?</p>
             <button onClick={handleCloseDeleteModal}>No, Cancel</button>
             <button onClick={handleDeleteSavings}>Yes, Delete</button>
+          </div>
+        </div>
+      )}
+
+      {editSavingsModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <form onSubmit={handleEditSavings}>
+              <div className=" budget-input">
+                <label htmlFor="savings-name">Savings Goal Name</label>
+                <input
+                  className="budget-in"
+                  id="savings-name"
+                  name="goalName"
+                  onChange={handleEditSavingsInput}
+                  value={editSavingsForm.goalName}
+                ></input>
+              </div>
+              <div className=" budget-input">
+                <label htmlFor="savings-target">Savings Target Amount</label>
+                <input
+                  className="budget-in"
+                  id="savings-target"
+                  name="targetAmount"
+                  onChange={handleEditSavingsInput}
+                  value={editSavingsForm.targetAmount}
+                ></input>
+              </div>
+              <div className=" budget-input">
+                <label htmlFor="savings-current">Current Amount</label>
+                <input
+                  className="budget-in"
+                  id="savings-current"
+                  name="currentAmount"
+                  onChange={handleEditSavingsInput}
+                  value={editSavingsForm.currentAmount}
+                ></input>
+              </div>
+              <button onClick={handleCloseEditModal}>Cancel</button>
+              <button type="submit">Save Changes</button>
+            </form>
           </div>
         </div>
       )}

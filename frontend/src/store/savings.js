@@ -2,12 +2,18 @@ import { csrfFetch } from "./csrf";
 
 const SET_SAVINGS = "savings/setSavings";
 const ADD_SAVINGS = "savings/setSavings";
+const EDIT_SAVINGS = "savings/editSavings";
 const DELETE_SAVINGS = "savings/deleteSavings";
 const REMOVE_USER = "session/removeUser";
 
 const setSavings = (savings) => ({
   type: SET_SAVINGS,
   payload: savings,
+});
+
+const editSavings = (savingsId, editedSavings) => ({
+  type: EDIT_SAVINGS,
+  payload: { savingsId, editedSavings },
 });
 
 const deleteSavings = (savingsId) => ({
@@ -49,6 +55,21 @@ export const addSavings = (formData) => async (dispatch, getState) => {
   dispatch(setSavings(updatedSavings));
 };
 
+export const editASavings = (savingsId, formData) => async (dispatch) => {
+  const res = await csrfFetch(`/api/savings/${savingsId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  if (!res.ok) throw new Error("Failed to edit savings");
+
+  dispatch(editSavings(savingsId, formData));
+  dispatch(fetchSavings());
+};
+
 export const deleteASavings = (savingsId) => async (dispatch) => {
   const res = await csrfFetch(`/api/savings/${savingsId}`, {
     method: "DELETE",
@@ -83,6 +104,24 @@ const savingsReducer = (state = initialState, action) => {
         ...state,
         savings: updatedSavings,
       };
+    case EDIT_SAVINGS:
+      const { savingsId, editedSavings } = action.payload;
+      const savingsIndex = state.savings.findIndex((saving) => saving.id === savingsId);
+
+      if (savingsIndex !== -1) {
+        const updatedSavings = [...state.savings];
+        updatedSavings[savingsIndex] = {
+          ...updatedSavings[savingsIndex],
+          ...editedSavings,
+        };
+
+        return {
+          ...state,
+          savings: updatedSavings,
+        };
+      }
+
+      return state;
     default:
       return state;
   }
