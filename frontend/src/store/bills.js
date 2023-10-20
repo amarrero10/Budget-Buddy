@@ -213,11 +213,9 @@ export const deleteABill = (billId) => async (dispatch, getState) => {
       dispatch(deleteBill(billId));
     } else {
       console.error("Failed to delete the bill. Status code:", res.status);
-      // You can dispatch an action to handle the error or show a user-friendly message here
     }
   } catch (error) {
     console.error("An error occurred while deleting the bill:", error);
-    // Handle the error (e.g., dispatch an action to show an error message)
   }
   dispatch(fetchBills());
   dispatch(fetchBudgets());

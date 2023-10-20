@@ -2,11 +2,17 @@ import { csrfFetch } from "./csrf";
 
 const SET_SAVINGS = "savings/setSavings";
 const ADD_SAVINGS = "savings/setSavings";
+const DELETE_SAVINGS = "savings/deleteSavings";
 const REMOVE_USER = "session/removeUser";
 
 const setSavings = (savings) => ({
   type: SET_SAVINGS,
   payload: savings,
+});
+
+const deleteSavings = (savingsId) => ({
+  type: DELETE_SAVINGS,
+  payload: savingsId,
 });
 
 export const fetchSavings = () => async (dispatch) => {
@@ -43,6 +49,16 @@ export const addSavings = (formData) => async (dispatch, getState) => {
   dispatch(setSavings(updatedSavings));
 };
 
+export const deleteASavings = (savingsId) => async (dispatch) => {
+  const res = await csrfFetch(`/api/savings/${savingsId}`, {
+    method: "DELETE",
+  });
+
+  if (res.ok) dispatch(deleteSavings(savingsId));
+
+  dispatch(fetchSavings());
+};
+
 const initialState = { savings: null };
 
 const savingsReducer = (state = initialState, action) => {
@@ -60,6 +76,12 @@ const savingsReducer = (state = initialState, action) => {
     case REMOVE_USER:
       return {
         ...initialState,
+      };
+    case DELETE_SAVINGS:
+      const updatedSavings = state.savings.filter((savings) => savings.id !== action.payload);
+      return {
+        ...state,
+        savings: updatedSavings,
       };
     default:
       return state;

@@ -3,13 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import Menu from "./Menu";
 import "./Savings.css";
 import * as savingsActions from "../store/savings";
-import { GoLog } from "react-icons/go";
 
 function Savings() {
   const dispatch = useDispatch();
   const savings = useSelector((state) => state.savings?.savings);
   const user = useSelector((state) => state.session.user.user);
   const [createSavingsModal, setCreateSavingsModal] = useState(false);
+  const [deleteSavingsModal, setDeleteSavingsModal] = useState(false);
+  const [savingsId, setSavingsId] = useState("");
   const [createSavingsForm, setCreateSavingsForm] = useState({
     goalName: "",
     targetAmount: "",
@@ -18,7 +19,7 @@ function Savings() {
 
   const openCreateSavingsModal = (e) => {
     e.preventDefault();
-    setCreateSavingsModal(!createSavingsModal);
+    setCreateSavingsModal(true);
   };
 
   const handleCloseCreateModal = (e) => {
@@ -41,7 +42,7 @@ function Savings() {
 
   const handleCreateSavings = (e) => {
     e.preventDefault();
-    console.log(createSavingsForm);
+
     dispatch(savingsActions.addSavings(createSavingsForm));
     setCreateSavingsModal(false);
     setCreateSavingsForm({
@@ -51,9 +52,20 @@ function Savings() {
     });
   };
 
-  console.log(createSavingsModal);
+  const handleDeleteSavingsModal = (savingsId) => {
+    setDeleteSavingsModal(true);
+    setSavingsId(savingsId);
+  };
 
-  console.log("SAVINGS", savings);
+  const handleCloseDeleteModal = () => {
+    setDeleteSavingsModal(false);
+  };
+
+  const handleDeleteSavings = () => {
+    dispatch(savingsActions.deleteASavings(savingsId));
+    setDeleteSavingsModal(false);
+  };
+
   return (
     <>
       <div className="savings-page">
@@ -65,7 +77,7 @@ function Savings() {
           <div className="savings-card-container">
             {savings ? (
               savings.map((saving) => (
-                <div className=" savings-card">
+                <div key={saving.id} className=" savings-card">
                   <div className="savings-info-and-btns">
                     <div className="savings-info">
                       <p className="saving-name">{saving.goalName}</p>
@@ -78,7 +90,12 @@ function Savings() {
                     </div>
                     <div className="savings-btns">
                       <button className="nav-btn">Edit</button>
-                      <button className="nav-btn">Delete</button>
+                      <button
+                        className="nav-btn"
+                        onClick={() => handleDeleteSavingsModal(saving.id)}
+                      >
+                        Delete
+                      </button>
                       <button className="nav-btn">Contribute</button>
                     </div>
                   </div>
@@ -132,6 +149,16 @@ function Savings() {
               <button onClick={handleCloseCreateModal}>Cancel</button>
               <button type="submit">Create Savings</button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {deleteSavingsModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <p>Are you sure you want to delete this goal?</p>
+            <button onClick={handleCloseDeleteModal}>No, Cancel</button>
+            <button onClick={handleDeleteSavings}>Yes, Delete</button>
           </div>
         </div>
       )}
