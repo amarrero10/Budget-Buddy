@@ -3,6 +3,7 @@ import { csrfFetch } from "./csrf";
 const SET_SAVINGS = "savings/setSavings";
 const ADD_SAVINGS = "savings/setSavings";
 const EDIT_SAVINGS = "savings/editSavings";
+const CONTRIBUTE_SAVINGS = "savings/contrbuteSavings";
 const DELETE_SAVINGS = "savings/deleteSavings";
 const REMOVE_USER = "session/removeUser";
 
@@ -13,6 +14,11 @@ const setSavings = (savings) => ({
 
 const editSavings = (savingsId, editedSavings) => ({
   type: EDIT_SAVINGS,
+  payload: { savingsId, editedSavings },
+});
+
+const contributeSavings = (savingsId, editedSavings) => ({
+  type: CONTRIBUTE_SAVINGS,
   payload: { savingsId, editedSavings },
 });
 
@@ -70,6 +76,22 @@ export const editASavings = (savingsId, formData) => async (dispatch) => {
   dispatch(fetchSavings());
 };
 
+export const contributeToSavings = (savingsId, formData) => async (dispatch) => {
+  console.log("FORM DATA", formData);
+  const res = await csrfFetch(`/api/savings/${savingsId}/contribute`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  if (!res.ok) throw new Error("Failed to contribute to savings");
+
+  dispatch(contributeSavings(savingsId, formData));
+  dispatch(fetchSavings());
+};
+
 export const deleteASavings = (savingsId) => async (dispatch) => {
   const res = await csrfFetch(`/api/savings/${savingsId}`, {
     method: "DELETE",
@@ -113,6 +135,24 @@ const savingsReducer = (state = initialState, action) => {
         updatedSavings[savingsIndex] = {
           ...updatedSavings[savingsIndex],
           ...editedSavings,
+        };
+
+        return {
+          ...state,
+          savings: updatedSavings,
+        };
+      }
+
+      return state;
+    case CONTRIBUTE_SAVINGS:
+      const { contributedSavingsId, contributedSavings } = action.payload;
+      const savingsIdx = state.savings.findIndex((saving) => saving.id === contributedSavingsId);
+
+      if (savingsIdx !== -1) {
+        const updatedSavings = [...state.savings];
+        updatedSavings[savingsIdx] = {
+          ...updatedSavings[savingsIdx],
+          ...contributedSavings,
         };
 
         return {

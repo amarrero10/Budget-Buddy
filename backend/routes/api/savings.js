@@ -53,6 +53,25 @@ router.put("/:id", async (req, res) => {
   res.status(200).json(savings);
 });
 
+// Update (PUT) Contributed Amount
+router.put("/:id/contribute", async (req, res) => {
+  const { id } = req.params;
+  const { goalName, targetAmount, currentAmount } = req.body;
+
+  const savings = await SavingGoal.findByPk(id);
+  if (!savings) {
+    return res.status(404).json({ error: "Savings not found" });
+  }
+
+  savings.goalName = goalName;
+  savings.targetAmount = targetAmount;
+  savings.currentAmount = currentAmount;
+
+  await savings.save();
+
+  res.status(200).json(savings);
+});
+
 // DELETE Savings Goal
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
