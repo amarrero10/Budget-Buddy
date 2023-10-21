@@ -15,6 +15,8 @@ function Savings() {
   const [savingsId, setSavingsId] = useState("");
   const [currentAmount, setCurrentAmount] = useState("");
   const [savingsErrors, setSavingsErrors] = useState({});
+  const [editSavingsErrors, setEditSavingsErrors] = useState({});
+  const [contributeErrors, setContributeErrors] = useState({});
 
   const [createSavingsForm, setCreateSavingsForm] = useState({
     goalName: "",
@@ -91,8 +93,12 @@ function Savings() {
 
   const handleEditSavings = (e) => {
     e.preventDefault();
-    dispatch(savingsActions.editASavings(savingsId, editSavingsForm));
-    setEditSavingsModal(false);
+    const isValid = validateEditForm();
+
+    if (isValid) {
+      dispatch(savingsActions.editASavings(savingsId, editSavingsForm));
+      setEditSavingsModal(false);
+    }
   };
 
   const handleCloseEditModal = () => {
@@ -136,14 +142,15 @@ function Savings() {
 
   const handleContributeSavings = (e) => {
     e.preventDefault();
+    const isValid = validateContributeForm();
 
-    contributeForm.currentAmount = Number(currentAmount) + Number(contributeForm.currentAmount);
-    dispatch(savingsActions.contributeToSavings(savingsId, contributeForm));
+    if (isValid) {
+      contributeForm.currentAmount = Number(currentAmount) + Number(contributeForm.currentAmount);
+      dispatch(savingsActions.contributeToSavings(savingsId, contributeForm));
 
-    setContributeModal(false);
+      setContributeModal(false);
+    }
   };
-
-  console.log(createSavingsForm);
 
   const validateForm = () => {
     const newErrors = {};
@@ -172,6 +179,48 @@ function Savings() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const validateEditForm = () => {
+    const newErrors = {};
+
+    if (!editSavingsForm.goalName) {
+      newErrors.goalName = "A name for yours savings is required.";
+    }
+
+    if (!editSavingsForm.targetAmount) {
+      newErrors.targetAmount = "Target Amount is required.";
+    } else if (Number(editSavingsForm.targetAmount) <= 0) {
+      newErrors.targetAmount = "Target Amount must be a positive number.";
+    }
+
+    if (!editSavingsForm.currentAmount) {
+      newErrors.currentAmount = "Current Amount is required.";
+    } else if (Number(editSavingsForm.targetAmount) <= Number(createSavingsForm.currentAmount)) {
+      newErrors.currentAmount = " Current Amount must be less than Target Amount";
+    } else if (Number(editSavingsForm.currentAmount) <= 0) {
+      newErrors.currentAmount = "Current Amount must be a positive number.";
+    }
+
+    setEditSavingsErrors(newErrors);
+
+    // Return true if there are no errors, indicating the form is valid
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateContributeForm = () => {
+    const newErrors = {};
+
+    if (!contributeForm.currentAmount) {
+      newErrors.currentAmount = "Amount is required ";
+    } else if (Number(contributeForm.currentAmount) <= 0) {
+      newErrors.currentAmount = "Amount must be a positive number.";
+    }
+
+    setContributeErrors(newErrors);
+
+    // Return true if there are no errors, indicating the form is valid
+    return Object.keys(newErrors).length === 0;
+  };
+
   return (
     <>
       <div className="savings-page">
@@ -183,8 +232,17 @@ function Savings() {
           <div className="savings-card-container">
             {savings ? (
               savings.map((saving) => (
-                <div key={saving.id} className=" savings-card">
-                  <div className="savings-info-and-btns">
+                <div key={saving.id} className=" savings-card pad">
+                  {/* {(saving.currentAmount / saving.targetAmount) * 100 >= 100 && (
+                    <div className="goal">
+                      <p> Great Job, you reached your goal! 🎉🎉</p>
+                    </div>
+                  )} */}
+                  <div
+                    className={`savings-info-and-btns ${
+                      (saving.currentAmount / saving.targetAmount) * 100 >= 100 ? "green" : ""
+                    }`}
+                  >
                     <div className="savings-info">
                       <p className="saving-name">{saving.goalName}</p>
                       <p>
@@ -194,22 +252,38 @@ function Savings() {
                         <span className="saving-amounts">Current: </span> ${saving.currentAmount}
                       </p>
                     </div>
-                    <div className="savings-btns">
-                      <button className="nav-btn" onClick={() => handleEditSavingsModal(saving.id)}>
-                        Edit
-                      </button>
-                      <button
-                        className="nav-btn"
-                        onClick={() => handleDeleteSavingsModal(saving.id)}
-                      >
-                        Delete
-                      </button>
-                      <button className="nav-btn" onClick={() => handleContributeModal(saving.id)}>
-                        Contribute
-                      </button>
-                    </div>
                   </div>
-                  <p>PROGRESS BAR</p>
+                  <div className="budget-progress-container ">
+                    {(saving.currentAmount / saving.targetAmount) * 100 <= 100 ? (
+                      <div
+                        className=" budget-progress"
+                        style={{ width: `${(saving.currentAmount / saving.targetAmount) * 100}%` }}
+                      ></div>
+                    ) : (
+                      <div
+                        className="budget-progress "
+                        style={{
+                          width: `100%`,
+                        }}
+                      ></div>
+                    )}
+                  </div>
+                  <div className="percent">
+                    {saving.currentAmount / saving.targetAmount === 0
+                      ? "0%"
+                      : `${((saving.currentAmount / saving.targetAmount) * 100).toFixed(2)}%`}
+                  </div>
+                  <div className="savings-btns">
+                    <button className="nav-btn" onClick={() => handleEditSavingsModal(saving.id)}>
+                      Edit
+                    </button>
+                    <button className="nav-btn" onClick={() => handleDeleteSavingsModal(saving.id)}>
+                      Delete
+                    </button>
+                    <button className="nav-btn" onClick={() => handleContributeModal(saving.id)}>
+                      Contribute
+                    </button>
+                  </div>
                 </div>
               ))
             ) : (
@@ -289,6 +363,7 @@ function Savings() {
                   onChange={handleEditSavingsInput}
                   value={editSavingsForm.goalName}
                 ></input>
+                <p className="error-text">{editSavingsErrors.goalName}</p>
               </div>
               <div className=" budget-input">
                 <label htmlFor="savings-target">Savings Target Amount</label>
@@ -299,6 +374,7 @@ function Savings() {
                   onChange={handleEditSavingsInput}
                   value={editSavingsForm.targetAmount}
                 ></input>
+                <p className="error-text">{editSavingsErrors.targetAmount}</p>
               </div>
               <div className=" budget-input">
                 <label htmlFor="savings-current">Current Amount</label>
@@ -309,6 +385,7 @@ function Savings() {
                   onChange={handleEditSavingsInput}
                   value={editSavingsForm.currentAmount}
                 ></input>
+                <p className="error-text">{editSavingsErrors.currentAmount}</p>
               </div>
               <button onClick={handleCloseEditModal}>Cancel</button>
               <button type="submit">Save Changes</button>
@@ -339,6 +416,7 @@ function Savings() {
                   onChange={handleContributeSavingsInput}
                   value={contributeForm.currentAmount}
                 ></input>
+                <p className="error-text">{contributeErrors.currentAmount}</p>
               </div>
               <button onClick={handleCloseContributeModal}>Cancel</button>
               <button type="submit">Make Contribution</button>

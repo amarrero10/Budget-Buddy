@@ -23,10 +23,8 @@
 
 .savings-btns {
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
-  padding: 10px 0;
-  padding-right: 5px;
+  padding: 10px;
 }
 
 .savings-info {
@@ -45,4 +43,18 @@
 
 .add-saving {
   margin-top: 40px;
+}
+
+.green {
+  color: green;
+}
+
+.goal {
+  text-align: center;
+  color: green;
+  font-size: 1.2rem;
+}
+
+.pad {
+  padding: 2px 5px;
 }
