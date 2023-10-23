@@ -272,7 +272,7 @@ function Dashboard() {
                       <div
                         className="progress"
                         style={{
-                          width: `${(totalSavings / savingsGoal) * 100}`,
+                          width: `${(totalSavings / savingsGoal) * 100}%`,
                           paddingLeft: "2px",
                         }}
                       >
