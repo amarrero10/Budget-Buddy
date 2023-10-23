@@ -268,9 +268,24 @@ function Dashboard() {
                   <FaSackDollar className="icon" />
                   <p className="progress-tracker">Combined Progress Made:</p>
                   <div className="progress-bar">
-                    <div className="progress" style={{ width: `${totalSavings}%` }}>
-                      {totalSavings}%
-                    </div>
+                    {(totalSavings / savingsGoal) * 100 <= 100 ? (
+                      <div
+                        className="progress"
+                        style={{
+                          width: `${(totalSavings / savingsGoal) * 100}`,
+                          paddingLeft: "2px",
+                        }}
+                      >
+                        {((totalSavings / savingsGoal) * 100).toFixed(2)}%
+                      </div>
+                    ) : (
+                      <div
+                        className="progress "
+                        style={{
+                          width: `100%`,
+                        }}
+                      ></div>
+                    )}
                   </div>
 
                   <p className="savings">{savings ? `Combined Saved: $${totalSavings}` : ""}</p>

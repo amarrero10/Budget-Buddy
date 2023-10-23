@@ -8,6 +8,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 80px;
+  margin-top: 70px;
 }
 
 .savings-card {
@@ -57,4 +58,8 @@
 
 .pad {
   padding: 2px 5px;
+}
+
+.title {
+  margin-top: 130px;
 }

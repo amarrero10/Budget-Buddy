@@ -228,71 +228,79 @@ function Savings() {
           <Menu />
         </div>
         <div>
-          <p>Welcome to your savings page, {user.username}!</p>
-          <div className="savings-card-container">
-            {savings ? (
-              savings.map((saving) => (
-                <div key={saving.id} className=" savings-card pad">
-                  {/* {(saving.currentAmount / saving.targetAmount) * 100 >= 100 && (
+          <div>
+            <p className="welcome title ">Welcome to your savings page, {user.username}!</p>
+            <div className="savings-card-container">
+              {savings ? (
+                savings.map((saving) => (
+                  <div key={saving.id} className=" savings-card pad">
+                    {/* {(saving.currentAmount / saving.targetAmount) * 100 >= 100 && (
                     <div className="goal">
                       <p> Great Job, you reached your goal! 🎉🎉</p>
                     </div>
                   )} */}
-                  <div
-                    className={`savings-info-and-btns ${
-                      (saving.currentAmount / saving.targetAmount) * 100 >= 100 ? "green" : ""
-                    }`}
-                  >
-                    <div className="savings-info">
-                      <p className="saving-name">{saving.goalName}</p>
-                      <p>
-                        <span className="saving-amounts">Target: </span> ${saving.targetAmount}
-                      </p>
-                      <p>
-                        <span className="saving-amounts">Current: </span> ${saving.currentAmount}
-                      </p>
+                    <div
+                      className={`savings-info-and-btns ${
+                        (saving.currentAmount / saving.targetAmount) * 100 >= 100 ? "green" : ""
+                      }`}
+                    >
+                      <div className="savings-info">
+                        <p className="saving-name">{saving.goalName}</p>
+                        <p>
+                          <span className="saving-amounts">Target: </span> ${saving.targetAmount}
+                        </p>
+                        <p>
+                          <span className="saving-amounts">Current: </span> ${saving.currentAmount}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="budget-progress-container ">
+                      {(saving.currentAmount / saving.targetAmount) * 100 <= 100 ? (
+                        <div
+                          className=" budget-progress"
+                          style={{
+                            width: `${(saving.currentAmount / saving.targetAmount) * 100}%`,
+                          }}
+                        ></div>
+                      ) : (
+                        <div
+                          className="budget-progress "
+                          style={{
+                            width: `100%`,
+                          }}
+                        ></div>
+                      )}
+                    </div>
+                    <div className="percent">
+                      {saving.currentAmount / saving.targetAmount === 0
+                        ? "0%"
+                        : `${((saving.currentAmount / saving.targetAmount) * 100).toFixed(2)}%`}
+                    </div>
+                    <div className="savings-btns">
+                      <button className="nav-btn" onClick={() => handleEditSavingsModal(saving.id)}>
+                        Edit
+                      </button>
+                      <button
+                        className="nav-btn"
+                        onClick={() => handleDeleteSavingsModal(saving.id)}
+                      >
+                        Delete
+                      </button>
+                      <button className="nav-btn" onClick={() => handleContributeModal(saving.id)}>
+                        Contribute
+                      </button>
                     </div>
                   </div>
-                  <div className="budget-progress-container ">
-                    {(saving.currentAmount / saving.targetAmount) * 100 <= 100 ? (
-                      <div
-                        className=" budget-progress"
-                        style={{ width: `${(saving.currentAmount / saving.targetAmount) * 100}%` }}
-                      ></div>
-                    ) : (
-                      <div
-                        className="budget-progress "
-                        style={{
-                          width: `100%`,
-                        }}
-                      ></div>
-                    )}
-                  </div>
-                  <div className="percent">
-                    {saving.currentAmount / saving.targetAmount === 0
-                      ? "0%"
-                      : `${((saving.currentAmount / saving.targetAmount) * 100).toFixed(2)}%`}
-                  </div>
-                  <div className="savings-btns">
-                    <button className="nav-btn" onClick={() => handleEditSavingsModal(saving.id)}>
-                      Edit
-                    </button>
-                    <button className="nav-btn" onClick={() => handleDeleteSavingsModal(saving.id)}>
-                      Delete
-                    </button>
-                    <button className="nav-btn" onClick={() => handleContributeModal(saving.id)}>
-                      Contribute
-                    </button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p>Loading savings data...</p>
-            )}
+                ))
+              ) : (
+                <p>Loading savings data...</p>
+              )}
+            </div>
+
+            <button className="nav-btn add-saving" onClick={openCreateSavingsModal}>
+              Add a savings goal
+            </button>
           </div>
-          <button className="nav-btn add-saving" onClick={openCreateSavingsModal}>
-            Add a savings goal
-          </button>
         </div>
       </div>
 
