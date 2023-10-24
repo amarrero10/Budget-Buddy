@@ -18,6 +18,7 @@ function Reminders() {
   const user = useSelector((state) => state.session.user.user);
   const [addReminderModal, setAddReminderModal] = useState(false);
   const [allRemindersModal, setAllRemindersModal] = useState(false);
+  const [editReminderModal, setEditReminderModal] = useState(false);
   const [createReminderForm, setCreateReminderForm] = useState({
     reminder: "",
     reminderDate: "",
@@ -89,6 +90,8 @@ function Reminders() {
   }
 
   const handleEditReminder = (reminderId) => {
+    setEditReminderModal(true);
+    setAllRemindersModal(false);
     console.log(reminderId);
   };
 
@@ -208,6 +211,20 @@ function Reminders() {
 
               <button type="submit">Add Reminder</button>
             </form> */}
+          </div>
+        </div>
+      )}
+      {editReminderModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <p>Is this working?</p>
+            <button
+              style={{ width: "60%" }}
+              className="modal-btns"
+              onClick={() => setEditReminderModal(false)}
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}
