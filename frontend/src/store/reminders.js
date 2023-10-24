@@ -46,15 +46,9 @@ export const addReminder = (formData) => async (dispatch, getState) => {
     }
 
     const data = await res.json();
-
-    console.log("NEW DATA FROM FORM", data);
     const existingReminders = getState().reminders.reminders;
 
-    console.log("EXISTING REMINDERS", existingReminders);
-
     const updatedReminders = [...existingReminders, data.newReminder];
-
-    console.log("UPDATED REMINDERS", updatedReminders);
 
     dispatch(setReminders(updatedReminders));
   } catch (error) {

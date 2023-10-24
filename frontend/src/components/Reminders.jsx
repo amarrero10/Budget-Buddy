@@ -15,15 +15,13 @@ import * as remindersActions from "../store/reminders";
 function Reminders() {
   const dispatch = useDispatch();
   const reminders = useSelector((state) => state.reminders?.reminders);
-  const [newReminders, setNewReminders] = useState(null);
-
   const user = useSelector((state) => state.session.user.user);
   const [addReminderModal, setAddReminderModal] = useState(false);
+  const [allRemindersModal, setAllRemindersModal] = useState(false);
   const [createReminderForm, setCreateReminderForm] = useState({
     reminder: "",
     reminderDate: "",
   });
-  const [reminderId, setReminderId] = useState("");
 
   useEffect(() => {
     dispatch(remindersActions.fetchReminders())
@@ -43,6 +41,7 @@ function Reminders() {
 
   const handleCreateReminderInput = (e) => {
     const { name, value } = e.target;
+
     setCreateReminderForm({
       ...createReminderForm,
       [name]: value,
@@ -55,6 +54,10 @@ function Reminders() {
 
     setCreateReminderForm({ reminder: "", reminderDate: "" });
     setAddReminderModal(false);
+  };
+
+  const handleEditReminderModal = () => {
+    setAllRemindersModal(true);
   };
 
   if (reminders && reminders.length > 0) {
@@ -85,6 +88,10 @@ function Reminders() {
     });
   }
 
+  const handleEditReminder = (reminderId) => {
+    console.log(reminderId);
+  };
+
   return (
     <div className="savings-page">
       <Menu />
@@ -98,9 +105,13 @@ function Reminders() {
               text: "Add Reminder",
               click: handleAddReminderModal,
             },
+            editEvent: {
+              text: "Edit Reminder",
+              click: handleEditReminderModal,
+            },
           }}
           headerToolbar={{
-            start: "today,prev,next,addEvent", // will normally be on the left. if RTL, will be on the right
+            start: "today,prev,next,addEvent,editEvent", // will normally be on the left. if RTL, will be on the right
             center: "title",
             end: "dayGridMonth,timeGridWeek,timeGridDay", // will normally be on the right. if RTL, will be on the left
           }}
@@ -115,7 +126,6 @@ function Reminders() {
               interactiveDebounce: 75,
             });
           }}
-          // eventClick={(info) => handleEventClick(info.event.id)}
         />
       </div>
       {addReminderModal && (
@@ -148,6 +158,56 @@ function Reminders() {
               <button onClick={() => setAddReminderModal(!addReminderModal)}>Cancel</button>
               <button type="submit">Add Reminder</button>
             </form>
+          </div>
+        </div>
+      )}
+      {/* Edit Reminder Modal */}
+      {allRemindersModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <p>Which reminder would you like to edit?</p>
+            {reminders.map((reminder) => (
+              <div key={reminder.id}>
+                <p className="reminder" onClick={() => handleEditReminder(reminder.id)}>
+                  {reminder.reminder}
+                </p>
+              </div>
+            ))}
+            <div className="modal-btns">
+              <button
+                style={{ width: "60%" }}
+                onClick={() => setAllRemindersModal(!allRemindersModal)}
+              >
+                Cancel
+              </button>
+            </div>
+            {/* <form onSubmit={handleEditReminder}>
+              <div className="budget-input">
+                <label htmlFor="reminder-name">What's the Reminder?</label>
+                <input
+                  type="text"
+                  name="reminder"
+                  value={createReminderForm.reminder}
+                  onChange={handleCreateReminderInput}
+                  placeholder="Pay the electric bill.."
+                  id="reminder-name"
+                  className="budget-in"
+                ></input>
+              </div>
+              <div className="budget-input">
+                <label htmlFor="reminder-date">What's the date?</label>
+                <input
+                  type="date"
+                  name="reminderDate"
+                  value={createReminderForm.reminderDate}
+                  onChange={handleCreateReminderInput}
+                  id="reminder-name"
+                  className="budget-in"
+                ></input>
+              </div>
+
+              <button type="submit">Add Reminder</button>
+            </form> */}
           </div>
         </div>
       )}

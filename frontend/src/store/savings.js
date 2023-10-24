@@ -50,6 +50,7 @@ export const addSavings = (formData) => async (dispatch, getState) => {
     body: JSON.stringify(formData),
   });
 
+  console.log("FORM DATA", formData);
   const data = await res.json();
 
   // Fetch the existing savings data from Redux store state

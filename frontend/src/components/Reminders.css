@@ -8,3 +8,14 @@
   font-weight: 500;
   margin-top: -20px;
 }
+
+.reminder {
+  padding: 10px;
+  border: 1px solid navy;
+  border-radius: 5px;
+}
+
+.reminder:hover {
+  cursor: pointer;
+  background-color: rgba(128, 128, 128, 0.341);
+}
