@@ -4,6 +4,7 @@ const usersRouter = require("./users.js");
 const billRouter = require("./bills.js");
 const budgetRouter = require("./budgets.js");
 const savingsRouter = require("./savings.js");
+const remindersRouter = require("./reminders.js");
 const { restoreUser } = require("../../utils/auth.js");
 
 router.use(restoreUser);
@@ -12,6 +13,7 @@ router.use("/users", usersRouter);
 router.use("/bills", billRouter);
 router.use("/budgets", budgetRouter);
 router.use("/savings", savingsRouter);
+router.use("/reminders", remindersRouter);
 
 const { setTokenCookie } = require("../../utils/auth.js");
 const { User } = require("../../db/models");

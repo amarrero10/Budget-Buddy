@@ -1,13 +1,156 @@
-import React from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Menu from "./Menu";
+import Fullcalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import { useDispatch, useSelector } from "react-redux";
+import { RRule } from "rrule";
+import rrulePlugin from "@fullcalendar/rrule";
+import "./Reminders.css";
+import tippy from "tippy.js";
+import "tippy.js/dist/tippy.css";
+import * as remindersActions from "../store/reminders";
 
 function Reminders() {
+  const dispatch = useDispatch();
+  const reminders = useSelector((state) => state.reminders?.reminders);
+  const [newReminders, setNewReminders] = useState(null);
+
+  const user = useSelector((state) => state.session.user.user);
+  const [addReminderModal, setAddReminderModal] = useState(false);
+  const [createReminderForm, setCreateReminderForm] = useState({
+    reminder: "",
+    reminderDate: "",
+  });
+  const [reminderId, setReminderId] = useState("");
+
+  useEffect(() => {
+    dispatch(remindersActions.fetchReminders())
+      .then((data) => {
+        console.log("TEST", data); // Log the data when it's available
+      })
+      .catch((error) => {
+        console.error("Failed to fetch reminders:", error);
+      });
+  }, [dispatch]);
+
+  const events = [];
+
+  const handleAddReminderModal = () => {
+    setAddReminderModal(true);
+  };
+
+  const handleCreateReminderInput = (e) => {
+    const { name, value } = e.target;
+    setCreateReminderForm({
+      ...createReminderForm,
+      [name]: value,
+    });
+  };
+
+  const handleAddReminder = (e) => {
+    e.preventDefault();
+    dispatch(remindersActions.addReminder(createReminderForm));
+
+    setCreateReminderForm({ reminder: "", reminderDate: "" });
+    setAddReminderModal(false);
+  };
+
+  if (reminders && reminders.length > 0) {
+    reminders.forEach((reminder) => {
+      const parts = reminder.reminderDate.split("-");
+      const year = parseInt(parts[0]);
+      const month = parseInt(parts[1]) - 1;
+      const day = parseInt(parts[2]);
+
+      const start = new Date(year, month, day);
+      const offset = start.getTimezoneOffset();
+      start.setMinutes(start.getMinutes() + offset);
+
+      const event = {
+        title: reminder.reminder,
+        start,
+        allDay: true,
+        id: reminder.id,
+      };
+
+      const rrule = new RRule({
+        freq: RRule.MONTHLY,
+        dtstart: start,
+      });
+
+      event.rrule = rrule.toString();
+      events.push(event);
+    });
+  }
+
   return (
     <div className="savings-page">
       <Menu />
-      <div>
-        <p>Coming Soon</p>
+      <div className=" calendar">
+        <p className=" reminder-title">Your Reminders</p>
+        <Fullcalendar
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, rrulePlugin]}
+          initialView={"dayGridMonth"}
+          customButtons={{
+            addEvent: {
+              text: "Add Reminder",
+              click: handleAddReminderModal,
+            },
+          }}
+          headerToolbar={{
+            start: "today,prev,next,addEvent", // will normally be on the left. if RTL, will be on the right
+            center: "title",
+            end: "dayGridMonth,timeGridWeek,timeGridDay", // will normally be on the right. if RTL, will be on the left
+          }}
+          height={"1100px"}
+          events={events}
+          eventDidMount={(info) => {
+            tippy(info.el, {
+              animation: "scale",
+              content: info.event.title,
+              allowHTML: true,
+              interactive: true,
+              interactiveDebounce: 75,
+            });
+          }}
+          // eventClick={(info) => handleEventClick(info.event.id)}
+        />
       </div>
+      {addReminderModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <form onSubmit={handleAddReminder}>
+              <div className="budget-input">
+                <label htmlFor="reminder-name">What's the Reminder?</label>
+                <input
+                  type="text"
+                  name="reminder"
+                  value={createReminderForm.reminder}
+                  onChange={handleCreateReminderInput}
+                  placeholder="Pay the electric bill.."
+                  id="reminder-name"
+                  className="budget-in"
+                ></input>
+              </div>
+              <div className="budget-input">
+                <label htmlFor="reminder-date">What's the date?</label>
+                <input
+                  type="date"
+                  name="reminderDate"
+                  value={createReminderForm.reminderDate}
+                  onChange={handleCreateReminderInput}
+                  id="reminder-name"
+                  className="budget-in"
+                ></input>
+              </div>
+              <button onClick={() => setAddReminderModal(!addReminderModal)}>Cancel</button>
+              <button type="submit">Add Reminder</button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

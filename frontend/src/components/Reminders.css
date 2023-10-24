@@ -1,0 +1,10 @@
+.calendar {
+  width: 100%;
+  padding-right: 10px;
+}
+
+.reminder-title {
+  font-size: 4rem;
+  font-weight: 500;
+  margin-top: -20px;
+}
