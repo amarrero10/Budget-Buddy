@@ -458,7 +458,6 @@ function Bills() {
     }
 
     if (formData.budgetId === "" || formData.budgetId === "--") {
-      console.log("BUDGET ID", formData.budgetId);
       newErrors.budgetId = "Budget is required";
     }
 
@@ -468,8 +467,6 @@ function Bills() {
 
     // Set the errors state
     setEditErrors(newErrors);
-
-    console.log(newErrors);
 
     // Return true if there are no errors, indicating the form is valid
     return Object.keys(newErrors).length === 0;
@@ -490,7 +487,6 @@ function Bills() {
     }
 
     if (oneTimeBillData.budgetId === "" || oneTimeBillData.budgetId === "--") {
-      console.log("BUDGET ID", oneTimeBillData.budgetId);
       newErrors.budgetId = "Budget is required";
     }
 
@@ -499,8 +495,6 @@ function Bills() {
     }
 
     setEditOneTimeErrors(newErrors);
-
-    console.log(newErrors);
 
     // Return true if there are no errors, indicating the form is valid
     return Object.keys(newErrors).length === 0;

@@ -142,6 +142,11 @@ function SignUpPage() {
               ></input>
             </div>
             {errors.username && <p className="error-text">{errors.username}</p>}
+            {errors.details && errors.details.length > 0 ? (
+              <p className="error-text">{errors.details[0]}</p>
+            ) : (
+              ""
+            )}
           </div>
           <div className="input-section">
             <label htmlFor="email">Email:</label>

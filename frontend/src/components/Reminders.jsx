@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Menu from "./Menu";
 import Fullcalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -15,7 +15,6 @@ import * as remindersActions from "../store/reminders";
 function Reminders() {
   const dispatch = useDispatch();
   const reminders = useSelector((state) => state.reminders?.reminders);
-  const user = useSelector((state) => state.session.user.user);
   const [reminderId, setReminderId] = useState("");
   const [addReminderModal, setAddReminderModal] = useState(false);
   const [allRemindersModal, setAllRemindersModal] = useState(false);
@@ -31,7 +30,7 @@ function Reminders() {
   useEffect(() => {
     dispatch(remindersActions.fetchReminders())
       .then((data) => {
-        console.log("TEST", data); // Log the data when it's available
+        // console.log("TEST", data); // Log the data when it's available
       })
       .catch((error) => {
         console.error("Failed to fetch reminders:", error);

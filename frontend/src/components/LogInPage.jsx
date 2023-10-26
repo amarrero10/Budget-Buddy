@@ -32,7 +32,7 @@ function LogInPage() {
   const handleDemoUser = async (e) => {
     e.preventDefault();
 
-    dispatch(sessionActions.login({ credential: "Demo-lition", password: "password" }));
+    await dispatch(sessionActions.login({ credential: "Demo-lition", password: "password" }));
   };
   return (
     <>

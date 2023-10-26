@@ -7,7 +7,7 @@ import * as savingsActions from "../store/savings";
 function Savings() {
   const dispatch = useDispatch();
   const savings = useSelector((state) => state.savings?.savings);
-  const user = useSelector((state) => state.session.user.user);
+  const user = useSelector((state) => state.session.user);
   const [createSavingsModal, setCreateSavingsModal] = useState(false);
   const [deleteSavingsModal, setDeleteSavingsModal] = useState(false);
   const [editSavingsModal, setEditSavingsModal] = useState(false);

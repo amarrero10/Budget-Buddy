@@ -11,7 +11,7 @@ import BudgetProgressBars from "../budget-charts/BudgetProgressBars";
 function Budget() {
   const dispatch = useDispatch();
   const budgets = useSelector((state) => state.budgets.budgets);
-  const user = useSelector((state) => state.session.user.user);
+  const user = useSelector((state) => state.session.user);
   const bills = useSelector((state) => state.bills.bills);
   const [editBudgetModal, setEditBudgetModal] = useState(false);
   const [deleteBudgetModal, setDeleteBudgetModal] = useState(false);

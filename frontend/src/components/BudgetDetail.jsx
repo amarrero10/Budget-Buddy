@@ -194,8 +194,6 @@ function BudgetDetail() {
     );
   });
 
-  console.log("CURRENT BILLS", currentMonthPaidBills);
-
   return (
     <>
       <div className="budget-detail">

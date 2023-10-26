@@ -80,7 +80,7 @@ function calculateDueDate(bill) {
 
 function Dashboard() {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.session.user.user);
+  const user = useSelector((state) => state.session.user);
   const bills = useSelector((state) => state.bills.bills);
   const budgets = useSelector((state) => state.budgets.budgets);
   const savings = useSelector((state) => state.savings.savings);
