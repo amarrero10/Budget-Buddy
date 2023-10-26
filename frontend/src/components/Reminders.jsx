@@ -16,6 +16,7 @@ function Reminders() {
   const dispatch = useDispatch();
   const reminders = useSelector((state) => state.reminders?.reminders);
   const user = useSelector((state) => state.session.user.user);
+  const [reminderId, setReminderId] = useState("");
   const [addReminderModal, setAddReminderModal] = useState(false);
   const [allRemindersModal, setAllRemindersModal] = useState(false);
   const [editReminderModal, setEditReminderModal] = useState(false);
@@ -23,6 +24,7 @@ function Reminders() {
     reminder: "",
     reminderDate: "",
   });
+  const [editReminderForm, setEditReminderForm] = useState({});
 
   useEffect(() => {
     dispatch(remindersActions.fetchReminders())
@@ -89,10 +91,35 @@ function Reminders() {
     });
   }
 
-  const handleEditReminder = (reminderId) => {
+  const submitEditForm = (e) => {
+    e.preventDefault();
+
+    dispatch(remindersActions.editAReminder(reminderId, editReminderForm));
+    setEditReminderModal(false);
+  };
+
+  const handleEditReminder = async (reminderId) => {
     setEditReminderModal(true);
     setAllRemindersModal(false);
-    console.log(reminderId);
+    setReminderId(reminderId);
+    const res = await fetch(`/api/reminders/${reminderId}`);
+    const data = await res.json();
+    const reminderDate = new Date(data.reminder.reminderDate);
+    const inputFormattedDate = reminderDate.toISOString().split("T")[0];
+    data.reminder.reminderDate = inputFormattedDate;
+    setEditReminderForm({
+      reminder: data.reminder.reminder || "",
+      reminderDate: inputFormattedDate || "",
+    });
+  };
+
+  const handleEditReminderInput = (e) => {
+    const { name, value } = e.target;
+
+    setEditReminderForm({
+      ...editReminderForm,
+      [name]: value,
+    });
   };
 
   return (
@@ -217,9 +244,36 @@ function Reminders() {
       {editReminderModal && (
         <div className="modal">
           <div className="modal-content">
-            <p>Is this working?</p>
+            <form onSubmit={submitEditForm}>
+              <div className="budget-input">
+                <label htmlFor="reminder-name">What's the Reminder?</label>
+                <input
+                  type="text"
+                  name="reminder"
+                  value={editReminderForm.reminder}
+                  onChange={handleEditReminderInput}
+                  placeholder="Pay the electric bill.."
+                  id="reminder-name"
+                  className="budget-in"
+                ></input>
+              </div>
+              <div className="budget-input">
+                <label htmlFor="reminder-date">What's the date?</label>
+                <input
+                  type="date"
+                  name="reminderDate"
+                  value={editReminderForm.reminderDate}
+                  onChange={handleEditReminderInput}
+                  id="reminder-name"
+                  className="budget-in"
+                ></input>
+              </div>
+
+              <button type="submit">Edit Reminder</button>
+            </form>
+
             <button
-              style={{ width: "60%" }}
+              style={{ width: "100%" }}
               className="modal-btns"
               onClick={() => setEditReminderModal(false)}
             >

@@ -1,11 +1,17 @@
 import { csrfFetch } from "./csrf";
 
 const SET_REMINDERS = "reminders/setReminders";
+const EDIT_REMINDER = "reminders/editReminder";
 const REMOVE_USER = "session/removeUser";
 
 const setReminders = (reminders) => ({
   type: SET_REMINDERS,
   payload: reminders,
+});
+
+const editReminder = (reminderId, editedReminder) => ({
+  type: EDIT_REMINDER,
+  payload: { reminderId, editedReminder },
 });
 
 export const fetchReminders = () => async (dispatch) => {
@@ -58,6 +64,21 @@ export const addReminder = (formData) => async (dispatch, getState) => {
   }
 };
 
+export const editAReminder = (reminderId, formData) => async (dispatch) => {
+  const res = await csrfFetch(`/api/reminders/${reminderId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  if (!res.ok) throw new Error("Failed to edit reminder.");
+
+  dispatch(editReminder(reminderId, formData));
+  dispatch(fetchReminders());
+};
+
 const initialState = { reminders: null };
 
 const remindersReducer = (state = initialState, action) => {
@@ -71,6 +92,24 @@ const remindersReducer = (state = initialState, action) => {
       return {
         ...initialState,
       };
+    case EDIT_REMINDER:
+      const { reminderId, editedReminder } = action.payload;
+      const reminderIndex = state.reminders.findIndex((reminder) => reminder.id === reminderId);
+
+      if (reminderIndex !== -1) {
+        const updatedReminders = [...state.reminders];
+        updatedReminders[reminderIndex] = {
+          ...updatedReminders[reminderIndex],
+          ...editedReminder,
+        };
+
+        return {
+          ...state,
+          reminders: updatedReminders,
+        };
+      }
+
+      return state;
     default:
       return state;
   }
