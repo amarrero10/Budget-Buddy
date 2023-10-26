@@ -50,4 +50,19 @@ router.put("/:id", async (req, res) => {
   res.status(200).json(newReminder);
 });
 
+// DELETE a reminder
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const reminder = await Reminder.findByPk(id);
+
+  if (!reminder) {
+    return res.status(404).json({ error: "Reminder not found." });
+  }
+
+  await reminder.destroy();
+
+  res.json({ message: "Succesfully Deleted!" });
+});
+
 module.exports = router;

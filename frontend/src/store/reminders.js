@@ -2,6 +2,7 @@ import { csrfFetch } from "./csrf";
 
 const SET_REMINDERS = "reminders/setReminders";
 const EDIT_REMINDER = "reminders/editReminder";
+const DELETE_REMINDER = "reminders/deleteReminder";
 const REMOVE_USER = "session/removeUser";
 
 const setReminders = (reminders) => ({
@@ -12,6 +13,11 @@ const setReminders = (reminders) => ({
 const editReminder = (reminderId, editedReminder) => ({
   type: EDIT_REMINDER,
   payload: { reminderId, editedReminder },
+});
+
+const deleteReminder = (reminderId) => ({
+  type: DELETE_REMINDER,
+  payload: reminderId,
 });
 
 export const fetchReminders = () => async (dispatch) => {
@@ -79,6 +85,16 @@ export const editAReminder = (reminderId, formData) => async (dispatch) => {
   dispatch(fetchReminders());
 };
 
+export const deleteAReminder = (reminderId) => async (dispatch) => {
+  const res = await csrfFetch(`/api/reminders/${reminderId}`, {
+    method: "DELETE",
+  });
+
+  if (res.ok) dispatch(deleteReminder(reminderId));
+
+  dispatch(fetchReminders());
+};
+
 const initialState = { reminders: null };
 
 const remindersReducer = (state = initialState, action) => {
@@ -110,6 +126,13 @@ const remindersReducer = (state = initialState, action) => {
       }
 
       return state;
+    case DELETE_REMINDER:
+      const updatedReminders = state.reminders.filter((reminder) => reminder.id !== action.payload);
+
+      return {
+        ...state,
+        reminders: updatedReminders,
+      };
     default:
       return state;
   }

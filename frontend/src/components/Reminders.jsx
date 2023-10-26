@@ -25,6 +25,8 @@ function Reminders() {
     reminderDate: "",
   });
   const [editReminderForm, setEditReminderForm] = useState({});
+  const [allRemindersDeleteModal, setAllRemindersDeleteModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
 
   useEffect(() => {
     dispatch(remindersActions.fetchReminders())
@@ -98,6 +100,13 @@ function Reminders() {
     setEditReminderModal(false);
   };
 
+  const deleteReminder = (e) => {
+    e.preventDefault();
+    setAllRemindersDeleteModal(false);
+    setDeleteModal(false);
+    dispatch(remindersActions.deleteAReminder(reminderId));
+  };
+
   const handleEditReminder = async (reminderId) => {
     setEditReminderModal(true);
     setAllRemindersModal(false);
@@ -122,6 +131,15 @@ function Reminders() {
     });
   };
 
+  const handleDeleteReminderModal = () => {
+    setAllRemindersDeleteModal(true);
+  };
+
+  const handleDeleteReminder = (reminderId) => {
+    setReminderId(reminderId);
+    setDeleteModal(true);
+  };
+
   return (
     <div className="savings-page">
       <Menu />
@@ -139,9 +157,13 @@ function Reminders() {
               text: "Edit Reminder",
               click: handleEditReminderModal,
             },
+            deleteEvent: {
+              text: "Delete Reminder",
+              click: handleDeleteReminderModal,
+            },
           }}
           headerToolbar={{
-            start: "today,prev,next,addEvent,editEvent", // will normally be on the left. if RTL, will be on the right
+            start: "today,prev,next,addEvent,editEvent,deleteEvent", // will normally be on the left. if RTL, will be on the right
             center: "title",
             end: "dayGridMonth,timeGridWeek,timeGridDay", // will normally be on the right. if RTL, will be on the left
           }}
@@ -211,33 +233,6 @@ function Reminders() {
                 Cancel
               </button>
             </div>
-            {/* <form onSubmit={handleEditReminder}>
-              <div className="budget-input">
-                <label htmlFor="reminder-name">What's the Reminder?</label>
-                <input
-                  type="text"
-                  name="reminder"
-                  value={createReminderForm.reminder}
-                  onChange={handleCreateReminderInput}
-                  placeholder="Pay the electric bill.."
-                  id="reminder-name"
-                  className="budget-in"
-                ></input>
-              </div>
-              <div className="budget-input">
-                <label htmlFor="reminder-date">What's the date?</label>
-                <input
-                  type="date"
-                  name="reminderDate"
-                  value={createReminderForm.reminderDate}
-                  onChange={handleCreateReminderInput}
-                  id="reminder-name"
-                  className="budget-in"
-                ></input>
-              </div>
-
-              <button type="submit">Add Reminder</button>
-            </form> */}
           </div>
         </div>
       )}
@@ -271,7 +266,6 @@ function Reminders() {
 
               <button type="submit">Edit Reminder</button>
             </form>
-
             <button
               style={{ width: "100%" }}
               className="modal-btns"
@@ -279,6 +273,41 @@ function Reminders() {
             >
               Cancel
             </button>
+          </div>
+        </div>
+      )}
+
+      {allRemindersDeleteModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <p>Which reminder would you like to delete?</p>
+            {reminders.map((reminder) => (
+              <div key={reminder.id}>
+                <p className="reminder" onClick={() => handleDeleteReminder(reminder.id)}>
+                  {reminder.reminder}
+                </p>
+              </div>
+            ))}
+            <div className="modal-btns">
+              <button
+                style={{ width: "60%" }}
+                onClick={() => setAllRemindersDeleteModal(!allRemindersDeleteModal)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {deleteModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <p>Are you sure you wanna delete this reminder?</p>
+
+            <div className="modal-btns">
+              <button onClick={() => setDeleteModal(!deleteModal)}>Cancel</button>
+              <button onClick={deleteReminder}>Yes, delete!</button>
+            </div>
           </div>
         </div>
       )}
