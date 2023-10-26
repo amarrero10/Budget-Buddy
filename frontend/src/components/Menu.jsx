@@ -36,12 +36,12 @@ function Menu() {
         </div>
       </Link>
 
-      <Link to="/account">
+      {/* <Link to="/account">
         <div className="menu-option">
           <FaCog className="menu-icon" />
           <p>Settings</p>
         </div>
-      </Link>
+      </Link> */}
     </div>
   );
 }
