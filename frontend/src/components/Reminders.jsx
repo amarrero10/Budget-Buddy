@@ -26,6 +26,8 @@ function Reminders() {
   const [editReminderForm, setEditReminderForm] = useState({});
   const [allRemindersDeleteModal, setAllRemindersDeleteModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [editErrors, setEditErrors] = useState({});
 
   useEffect(() => {
     dispatch(remindersActions.fetchReminders())
@@ -54,10 +56,14 @@ function Reminders() {
 
   const handleAddReminder = (e) => {
     e.preventDefault();
-    dispatch(remindersActions.addReminder(createReminderForm));
+    const isValid = validateForm();
 
-    setCreateReminderForm({ reminder: "", reminderDate: "" });
-    setAddReminderModal(false);
+    if (isValid) {
+      dispatch(remindersActions.addReminder(createReminderForm));
+
+      setCreateReminderForm({ reminder: "", reminderDate: "" });
+      setAddReminderModal(false);
+    }
   };
 
   const handleEditReminderModal = () => {
@@ -94,9 +100,12 @@ function Reminders() {
 
   const submitEditForm = (e) => {
     e.preventDefault();
+    const isValid = validateEditForm();
 
-    dispatch(remindersActions.editAReminder(reminderId, editReminderForm));
-    setEditReminderModal(false);
+    if (isValid) {
+      dispatch(remindersActions.editAReminder(reminderId, editReminderForm));
+      setEditReminderModal(false);
+    }
   };
 
   const deleteReminder = (e) => {
@@ -137,6 +146,42 @@ function Reminders() {
   const handleDeleteReminder = (reminderId) => {
     setReminderId(reminderId);
     setDeleteModal(true);
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!createReminderForm.reminder) {
+      newErrors.reminder = "Reminder is required.";
+    } else if (createReminderForm.reminder.length < 3) {
+      newErrors.reminder = "Remineder requires at least 3 characters";
+    }
+
+    if (!createReminderForm.reminderDate) {
+      newErrors.reminderDate = "Date is required.";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateEditForm = () => {
+    const newErrors = {};
+
+    if (!editReminderForm.reminder) {
+      newErrors.reminder = "Reminder is required.";
+    } else if (editReminderForm.reminder.length < 3) {
+      newErrors.reminder = "Remineder requires at least 3 characters";
+    }
+
+    if (!editReminderForm.reminderDate) {
+      newErrors.reminderDate = "Date is required.";
+    }
+
+    setEditErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   return (
@@ -194,6 +239,7 @@ function Reminders() {
                   id="reminder-name"
                   className="budget-in"
                 ></input>
+                {errors.reminder && <p className="error-text">{errors.reminder}</p>}
               </div>
               <div className="budget-input">
                 <label htmlFor="reminder-date">What's the date?</label>
@@ -205,6 +251,7 @@ function Reminders() {
                   id="reminder-name"
                   className="budget-in"
                 ></input>
+                {errors.reminderDate && <p className="error-text">{errors.reminderDate}</p>}
               </div>
               <button onClick={() => setAddReminderModal(!addReminderModal)}>Cancel</button>
               <button type="submit">Add Reminder</button>
@@ -250,6 +297,7 @@ function Reminders() {
                   id="reminder-name"
                   className="budget-in"
                 ></input>
+                {editErrors.reminder && <p className="error-text">{editErrors.reminder}</p>}
               </div>
               <div className="budget-input">
                 <label htmlFor="reminder-date">What's the date?</label>
@@ -261,6 +309,7 @@ function Reminders() {
                   id="reminder-name"
                   className="budget-in"
                 ></input>
+                {editErrors.reminderDate && <p className="error-text">{editErrors.reminderDate}</p>}
               </div>
 
               <button type="submit">Edit Reminder</button>
