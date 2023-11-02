@@ -63,3 +63,6 @@
 .title {
   margin-top: 130px;
 }
+.disable {
+  cursor: not-allowed;
+}

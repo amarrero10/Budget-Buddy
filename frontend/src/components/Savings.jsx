@@ -409,7 +409,7 @@ function Savings() {
               <div className=" budget-input">
                 <label htmlFor="savings-current">Current Amount</label>
                 <input
-                  className="budget-in"
+                  className="budget-in disable"
                   id="savings-current"
                   disabled
                   value={currentAmount}
