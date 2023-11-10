@@ -22,7 +22,7 @@ function BudgetDetail() {
     dueDate: "",
     datePaid: "",
     budgetId: "",
-    isRecurring: "",
+    isRecurring: false,
   });
   const [formErrors, setFormErrors] = useState({});
 
@@ -150,7 +150,7 @@ function BudgetDetail() {
       dueDate: "",
       datePaid: "",
       budgetId: "",
-      isRecurring: "",
+      isRecurring: false,
     });
 
     dispatch(billsActions.addBillBudget(updatedFormData));
