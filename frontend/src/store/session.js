@@ -5,7 +5,6 @@ const SET_USER = "session/setUser";
 const REMOVE_USER = "session/removeUser";
 
 const setUser = (user) => {
-  console.log("USER", user);
   if (!user) {
     return {
       type: SET_USER,
@@ -36,7 +35,6 @@ export const login = (user) => async (dispatch) => {
   });
   const data = await response.json();
 
-  console.log("DEMO DATA", data);
   dispatch(setUser(data.user));
   return response;
 };
@@ -79,7 +77,6 @@ const sessionReducer = (state = initialState, action) => {
   let newState;
   switch (action.type) {
     case SET_USER:
-      console.log("PAYLOAD", action.payload);
       newState = Object.assign({}, state);
       newState.user = action.payload;
       return newState;
