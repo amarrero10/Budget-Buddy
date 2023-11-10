@@ -31,9 +31,7 @@ function Reminders() {
 
   useEffect(() => {
     dispatch(remindersActions.fetchReminders())
-      .then((data) => {
-        // console.log("TEST", data); // Log the data when it's available
-      })
+      .then((data) => {})
       .catch((error) => {
         console.error("Failed to fetch reminders:", error);
       });

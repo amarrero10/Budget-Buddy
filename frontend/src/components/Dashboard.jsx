@@ -11,6 +11,7 @@ import { FaClipboardList, FaSackDollar } from "react-icons/fa6";
 import { Doughnut } from "react-chartjs-2";
 import "chart.js/auto";
 import { GoGraph } from "react-icons/go";
+import Footer from "./Footer";
 
 function calculateDueDate(bill) {
   // Check if the bill has the required fields
@@ -336,6 +337,7 @@ function Dashboard() {
           {/*  */}
         </div>
       </div>
+      <Footer />
     </>
   );
 }

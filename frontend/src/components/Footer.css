@@ -1,0 +1,22 @@
+.footer {
+  background-color: #032a3e;
+  padding: 10px;
+  color: #fefefe;
+  text-align: center;
+}
+
+.icons-container {
+  width: 300px;
+  display: flex;
+  justify-content: space-around;
+  margin: 0 auto;
+}
+
+.icons {
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.icon-a {
+  color: #fefefe;
+}
